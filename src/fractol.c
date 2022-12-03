@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/11/29 18:26:44 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/03 02:01:15 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,10 @@ unsigned int	color(t_quaternion point)
 	i = -1;
 	while (++i < MAX_ITER && norm2(zc) < 4.0)
 		iter(&zc);
-	if (i < MAX_ITER)
+	if (MAX_ITER == i)
 		return (0x00000000);
 	else
-		return (i * 0x00050200);
+		return (i * 50 / MAX_ITER * 0x00050505);
 
 }
 
@@ -70,7 +70,7 @@ void	do_axis(t_2Dhypersection sect,
 	*y_axis = q_by_s(sect.y_vector, s);
 }
 
-void	project2D(t_2Dhypersection sect, unsigned int *img_addr)
+void	project2D(t_2Dhypersection sect)
 {
 	int				x;
 	int				y;
@@ -88,34 +88,18 @@ void	project2D(t_2Dhypersection sect, unsigned int *img_addr)
 		{
 			point = q_add(sect.center, q_by_s(x_axis, x - WIN_WIDTH / 2));
 			point = q_add(point, q_by_s(y_axis, y - WIN_HEIGHT / 2));
-			*img_addr = color(point);
-			img_addr++;
+			*(sect.addr) = color(point);
+			sect.addr++;
 		}
 	}
 }
 
-void	julia(unsigned int *img_addr, t_complex c, 
-		t_complex center, double zoom)
+void	julia(t_2Dhypersection	sect)
 {
-	t_2Dhypersection	sect;
-
-	sect.center.r = center.Re;
-	sect.center.i = center.Im;
-	sect.center.j = c.Re;
-	sect.center.k = c.Im;
-	sect.x_vector.r = 1.0;
-	sect.x_vector.i = 0;
-	sect.x_vector.j = 0;
-	sect.x_vector.k = 0;
-	sect.y_vector.r = 0;
-	sect.y_vector.i = 1.0;
-	sect.y_vector.j = 0;
-	sect.y_vector.k = 0;
-	sect.zoom = zoom;
-	project2D(sect, img_addr);
+	project2D(sect);
 }
 
-void	mandel(t_complex center, double zoom)
+void	mandel(unsigned int *img_addr, t_complex center, double zoom)
 {
 	t_2Dhypersection	sect;
 
@@ -133,6 +117,7 @@ void	mandel(t_complex center, double zoom)
 	sect.y_vector.k = 1;
 	sect.zoom = zoom;
 	write(1, "Aquí Mandel\n", 13);
+	project2D(sect, img_addr);
 }
 
 double	ft_strtof(char *str)
@@ -180,31 +165,37 @@ void	showhelp()
 	printf("Aquí ayuda\n");
 }
 
-void	gradient(unsigned int *img_addr)
+t_2Dhypersection	initialise_2d(unsigned int *addr,
+		t_complex z, t_complex c, double zoom)
 {
-	int		x;
-	int		y;
+	t_2Dhypersection	ret;
 
-	y = -1;
-	while (++y < 300)
-	{
-		x = -1;
-		while (++x < 500)
-		{
-			*img_addr = x * 256 / 500 * 0x10000 + 
-				y * 256 / 300 * 0x100;
-			img_addr++;
-		}
-	}
+	ret.addr = addr;
+	ret.center.r = z.Re;
+	ret.center.i = z.Im;
+	ret.center.j = c.Re;
+	ret.center.k = c.Im;
+	ret.x_vector.r = 0;
+	ret.x_vector.i = 0;
+	ret.x_vector.j = 0;
+	ret.x_vector.k = 0;
+	ret.y_vector.r = 0;
+	ret.y_vector.i = 0;
+	ret.y_vector.j = 0;
+	ret.y_vector.k = 0;
+	ret.zoom = zoom;
+	return (ret);
 }
 
 int	main(int nargs, char **args)
 {
-	void	*mlx;
-	t_data	img;
-	void	*mlx_win;
-	t_complex	c;
-	t_complex	z;
+	void				*mlx;
+	t_data				img;
+	void				*mlx_win;
+	t_2Dhypersection	params2D;
+	t_complex			z;
+	t_complex			c;
+	double				step;
 
 	if (nargs > 1)
 	{
@@ -215,27 +206,38 @@ int	main(int nargs, char **args)
 				&img.line_length, &img.endian);
 		printf("bpp: %d\nline_length: %d\nendian: %d\n", img.bits_per_pixel, 
 				img.line_length, img.endian);
-/*		gradient((unsigned int*)img.addr);*/
-		if ('j' == args[1][0])
+		step = 0.001;
+		c.Re = 0;
+		c.Im = 0;
+		if (nargs > 3)
 		{
 			c.Re = ft_strtof(args[2]);
 			c.Im = ft_strtof(args[3]);
-			z.Re = 0;
-			z.Im = 0;
-			if (c.Re != 12345 && c.Im != 12345)
+		}
+		if (c.Re != 12345 && c.Im != 12345)
+		{
+			if ('j' == args[1][0])
 			{
-				julia((unsigned int*)img.addr, c, z, 1.0);
+				z.Re = 0;
+				z.Im = 0;
+				params2D = initialise_2D((unsigned int*)img.addr, z, c, 1.0);
+				param2D.x_vector.r = 1.0;
+				param2D.y_vector.i = 1.0;
+				mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
+				mlx_loop_hook(mlx, julia, params2D);
+				params2D.center.k += step;
+				if (params2D.center.k > 0.02 || params2D.center.k < -0.02)
+					step *= -1;
+				/*mlx_loop(mlx);*/
+				return (0);
+			}
+			else if ('m' == args[1][0])
+			{
+				mandel((unsigned int*)img.addr, c, 1.0);
 				mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
 				mlx_loop(mlx);
 				return (0);
 			}
-		}
-		else if ('m' == args[1][0])
-		{
-			c.Re = 0;
-			c.Im = 0;
-			mandel(c, 256);
-			return (0);
 		}
 	}
 	showhelp();

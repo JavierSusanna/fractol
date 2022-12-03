@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/11/29 17:54:03 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/03 01:25:22 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 # include <mlx.h>
 
 
-# define WIN_WIDTH 500
-# define WIN_HEIGHT 300
-# define MAX_ITER 50
+# define WIN_WIDTH 2000
+# define WIN_HEIGHT 1200
+# define MAX_ITER 500
 
 
 typedef struct	s_data 
@@ -57,15 +57,9 @@ typedef struct	s_quaternion
 	double	k;
 }				t_quaternion;
 
-typedef struct	s_canvas
-{
-	unsigned int	width;
-	unsigned int	height;
-	t_pixel			**img;
-}				t_canvas;
-
 typedef struct	s_2Dhypersection
 {
+	unsigned int	*addr;
 	t_quaternion	center;
 	t_quaternion	x_vector;
 	t_quaternion	y_vector;
