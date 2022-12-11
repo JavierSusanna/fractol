@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/03 01:25:22 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/11 02:21:06 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 
 # define WIN_WIDTH 2000
 # define WIN_HEIGHT 1200
-# define MAX_ITER 500
+# define MAX_ITER 51
 
 
 typedef struct	s_data 
@@ -66,6 +66,14 @@ typedef struct	s_2Dhypersection
 	double			zoom;
 
 }				t_2Dhypersection;
+
+typedef struct	s_sack
+{
+	void				*mlx;
+	void				*mlx_win;
+	t_data				img;
+	t_2Dhypersection	params2D;
+}				t_sack;
 
 typedef struct	s_
 {

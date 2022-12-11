@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/03 02:01:15 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/11 01:50:15 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ t_quaternion	q_add(t_quaternion q1, t_quaternion q2)
 	return (q1);
 }
 
-t_quaternion	q_by_s(t_quaternion q1, double s)
+t_quaternion	q_by_scalar(t_quaternion q1, double s)
 {
 	q1.r *= s;
 	q1.i *= s;
@@ -46,7 +46,7 @@ void	iter(t_quaternion *zc)
 
 unsigned int	color(t_quaternion point)
 {
-	int				i;
+	unsigned int	i;
 	t_quaternion	zc;
 
 	zc = point;
@@ -56,7 +56,8 @@ unsigned int	color(t_quaternion point)
 	if (MAX_ITER == i)
 		return (0x00000000);
 	else
-		return (i * 50 / MAX_ITER * 0x00050505);
+		return (((i * 10) & 7) * 32 + ((i * 10) & 56) * 8192 + ((i * 10) & 448) * 65536);
+		/*return (i * 50 / MAX_ITER * 0x00050505);*/
 
 }
 
@@ -66,58 +67,43 @@ void	do_axis(t_2Dhypersection sect,
 	double	s;
 
 	s = 4.0 / (WIN_WIDTH * sect.zoom);
-	*x_axis = q_by_s(sect.x_vector, s);
-	*y_axis = q_by_s(sect.y_vector, s);
+	*x_axis = q_by_scalar(sect.x_vector, s);
+	*y_axis = q_by_scalar(sect.y_vector, s);
 }
 
-void	project2D(t_2Dhypersection sect)
+int	project2D(t_sack *s)
 {
 	int				x;
 	int				y;
 	t_quaternion	x_axis;
 	t_quaternion	y_axis;
 	t_quaternion	point;
-
+	
 	/*falta verificar que x_vect e y_vect son perpendiculares y normales*/
-	do_axis(sect, &x_axis, &y_axis);
+	/*printf("Entra a crear imagen... ");*/
+	do_axis(s->params2D, &x_axis, &y_axis);
 	y = -1;
 	while (++y < WIN_HEIGHT)
 	{
 		x = -1;
 		while (++x < WIN_WIDTH)
 		{
-			point = q_add(sect.center, q_by_s(x_axis, x - WIN_WIDTH / 2));
-			point = q_add(point, q_by_s(y_axis, y - WIN_HEIGHT / 2));
-			*(sect.addr) = color(point);
-			sect.addr++;
+			point = q_add(s->params2D.center, q_by_scalar(x_axis, x - WIN_WIDTH / 2));
+			point = q_add(point, q_by_scalar(y_axis, y - WIN_HEIGHT / 2));
+			*(s->params2D.addr) = color(point);
+			(s->params2D.addr)++;
 		}
 	}
-}
-
-void	julia(t_2Dhypersection	sect)
-{
-	project2D(sect);
-}
-
-void	mandel(unsigned int *img_addr, t_complex center, double zoom)
-{
-	t_2Dhypersection	sect;
-
-	sect.center.r = 0;
-	sect.center.i = 0;
-	sect.center.j = center.Re;
-	sect.center.k = center.Im;
-	sect.x_vector.r = 0;
-	sect.x_vector.i = 0;
-	sect.x_vector.j = 1;
-	sect.x_vector.k = 0;
-	sect.y_vector.r = 0;
-	sect.y_vector.i = 0;
-	sect.y_vector.j = 0;
-	sect.y_vector.k = 1;
-	sect.zoom = zoom;
-	write(1, "Aquí Mandel\n", 13);
-	project2D(sect, img_addr);
+	s->params2D.addr = (unsigned int *)s->img.addr;
+	/*printf("centro c.Im: %f\n", s->params2D.center.k);*/
+	mlx_put_image_to_window(s->mlx, s->mlx_win, s->img.img, 0, 0);
+	point.j = s->params2D.center.k / 30;
+	point.k = - s->params2D.center.j / 30;
+	s->params2D.center.j += point.j;
+	s->params2D.center.k += point.k;
+	s->params2D.center.j /= 1.0005554;
+	s->params2D.center.k /= 1.0005554;
+	return (0);
 }
 
 double	ft_strtof(char *str)
@@ -165,7 +151,7 @@ void	showhelp()
 	printf("Aquí ayuda\n");
 }
 
-t_2Dhypersection	initialise_2d(unsigned int *addr,
+t_2Dhypersection	initialise_2D(unsigned int *addr,
 		t_complex z, t_complex c, double zoom)
 {
 	t_2Dhypersection	ret;
@@ -187,55 +173,65 @@ t_2Dhypersection	initialise_2d(unsigned int *addr,
 	return (ret);
 }
 
+int closewin(int keycode)
+{
+	if (keycode)
+		exit(EXIT_SUCCESS);
+	printf("Cerrando ventana\n");
+	return (0);
+}
+
 int	main(int nargs, char **args)
 {
-	void				*mlx;
-	t_data				img;
-	void				*mlx_win;
-	t_2Dhypersection	params2D;
-	t_complex			z;
-	t_complex			c;
-	double				step;
+	t_sack		s;
+	t_complex	z;
+	t_complex	c;
+	double		step;
 
 	if (nargs > 1)
 	{
-		mlx = mlx_init();
-		mlx_win = mlx_new_window(mlx, WIN_WIDTH, WIN_HEIGHT, "Prueba");
-		img.img = mlx_new_image(mlx, WIN_WIDTH, WIN_HEIGHT);
-		img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, 
-				&img.line_length, &img.endian);
-		printf("bpp: %d\nline_length: %d\nendian: %d\n", img.bits_per_pixel, 
-				img.line_length, img.endian);
+		s.mlx = mlx_init();
+		s.mlx_win = mlx_new_window(s.mlx, WIN_WIDTH, WIN_HEIGHT, "Prueba");
+		s.img.img = mlx_new_image(s.mlx, WIN_WIDTH, WIN_HEIGHT);
+		s.img.addr = mlx_get_data_addr(s.img.img, &s.img.bits_per_pixel, 
+				&s.img.line_length, &s.img.endian);
+		printf("bpp: %d\nline_length: %d\nendian: %d\n", s.img.bits_per_pixel, 
+				s.img.line_length, s.img.endian);
 		step = 0.001;
 		c.Re = 0;
 		c.Im = 0;
+		z.Re = 0;
+		z.Im = 0;
 		if (nargs > 3)
 		{
 			c.Re = ft_strtof(args[2]);
 			c.Im = ft_strtof(args[3]);
 		}
-		if (c.Re != 12345 && c.Im != 12345)
+		if (c.Re * c.Re < 4 && c.Im * c.Im < 4)
 		{
+			s.params2D = initialise_2D((unsigned int*)s.img.addr, z, c, 1.0);
+			printf("2Dhs.addr, img.addr= %p, %p\n", s.params2D.addr, s.img.addr);
 			if ('j' == args[1][0])
 			{
-				z.Re = 0;
-				z.Im = 0;
-				params2D = initialise_2D((unsigned int*)img.addr, z, c, 1.0);
-				param2D.x_vector.r = 1.0;
-				param2D.y_vector.i = 1.0;
-				mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
-				mlx_loop_hook(mlx, julia, params2D);
-				params2D.center.k += step;
+				s.params2D.x_vector.r = 1.0;
+				s.params2D.y_vector.i = 1.0;
+/*				params2D.center.k += step;
 				if (params2D.center.k > 0.02 || params2D.center.k < -0.02)
 					step *= -1;
-				/*mlx_loop(mlx);*/
-				return (0);
-			}
-			else if ('m' == args[1][0])
-			{
-				mandel((unsigned int*)img.addr, c, 1.0);
-				mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
 				mlx_loop(mlx);
+				return (0);*/
+			}
+			if ('m' == args[1][0])
+			{
+				s.params2D.x_vector.j = 1.0;
+				s.params2D.y_vector.k = 1.0;
+			}
+			if ('j' == args[1][0] || 'm' == args[1][0])
+			{
+				mlx_hook(s.mlx_win, 2, 1L<<0, closewin, NULL);
+				mlx_loop_hook(s.mlx, project2D, &s);
+				printf("Sale de loop_hook\n");
+				mlx_loop(s.mlx);
 				return (0);
 			}
 		}
