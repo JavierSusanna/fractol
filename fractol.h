@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/12 01:52:26 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/12 15:59:18 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,10 @@
 # include <mlx.h>
 
 
-# define WIN_WIDTH 2000
-# define WIN_HEIGHT 1200
-# define MAX_ITER 50
+# define WIN_WIDTH 1000
+# define WIN_HEIGHT 600
+# define MAX_ITER 500
+# define ZOOM_FACTOR 2
 
 
 typedef struct	s_data 

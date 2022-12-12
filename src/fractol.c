@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/12 02:06:04 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/12 17:37:43 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ unsigned int	color(t_quaternion point)
 	while (++i < MAX_ITER && norm2(zc) < 4.0)
 		iter(&zc);
 	if (MAX_ITER == i)
-		return (0x8000d000);
+		return (0x0000d000);
 	else
 	{
 		i = i * 512 / MAX_ITER;
@@ -64,48 +64,45 @@ unsigned int	color(t_quaternion point)
 
 }
 
-void	do_axis(t_2Dhypersection sect, 
+void	pixel_axis(t_2Dhypersection sect, 
 		t_quaternion *x_axis, t_quaternion *y_axis)
 {
-	double	s;
+	double	sc;
 
-	s = 4.0 / (WIN_WIDTH * sect.zoom);
-	*x_axis = q_by_scalar(sect.x_vector, s);
-	*y_axis = q_by_scalar(sect.y_vector, s);
+	sc = 4.0 / (WIN_WIDTH * sect.zoom);
+	*x_axis = q_by_scalar(sect.x_vector, sc);
+	*y_axis = q_by_scalar(sect.y_vector, sc);
 }
 
-int	project2D(t_sack *s)
+int	project2D(t_sack *s, int x, int y)
 {
-	int				x;
-	int				y;
 	t_quaternion	x_axis;
 	t_quaternion	y_axis;
-	t_quaternion	point;
+	t_quaternion	x0;
 	
 	/*falta verificar que x_vect e y_vect son perpendiculares y normales*/
 	/*printf("Entra a crear imagen... ");*/
-	do_axis(s->params2D, &x_axis, &y_axis);
+	pixel_axis(s->params2D, &x_axis, &y_axis);
+	s->params2D.center = q_add(s->params2D.center, q_by_scalar(x_axis, x - WIN_WIDTH / 2));
+	s->params2D.center = q_add(s->params2D.center, q_by_scalar(y_axis, y - WIN_HEIGHT / 2));
 	y = -1;
 	while (++y < WIN_HEIGHT)
 	{
+		x0 = q_add(s->params2D.center, q_by_scalar(x_axis, -1 - WIN_WIDTH / 2));
+		x0 = q_add(x0, q_by_scalar(y_axis, y - WIN_HEIGHT / 2));
 		x = -1;
 		while (++x < WIN_WIDTH)
-		{
-			point = q_add(s->params2D.center, q_by_scalar(x_axis, x - WIN_WIDTH / 2));
-			point = q_add(point, q_by_scalar(y_axis, y - WIN_HEIGHT / 2));
-			*(s->params2D.addr) = color(point);
-			(s->params2D.addr)++;
-		}
+			*(s->params2D.addr++) = color(q_add(x0, q_by_scalar(x_axis, x)));
 	}
 	s->params2D.addr = (unsigned int *)s->img.addr;
 	/*printf("centro c.Im: %f\n", s->params2D.center.k);*/
 	mlx_put_image_to_window(s->mlx, s->mlx_win, s->img.img, 0, 0);
-	point.j = s->params2D.center.k / 30;
+/*	point.j = s->params2D.center.k / 30;
 	point.k = - s->params2D.center.j / 30;
 	s->params2D.center.j += point.j;
 	s->params2D.center.k += point.k;
 	s->params2D.center.j /= 1.0005554;
-	s->params2D.center.k /= 1.0005554;
+	s->params2D.center.k /= 1.0005554;*/
 	return (0);
 }
 
@@ -191,6 +188,33 @@ int closewin(int keycode)
 	return (0);
 }
 
+int mouse_action(int button, int x, int y, t_sack *s)
+{
+	if (5 == button)
+	{
+		s->params2D.zoom *= ZOOM_FACTOR;
+/*x = w/2 +(1-1/zf)*(x-w/2)*zf = w/2+(zf-1)(x-w/2)=w/2*(1-zf+1) +x(zf-1);*/
+		x = WIN_WIDTH / 2 * (2 - ZOOM_FACTOR) + x * (ZOOM_FACTOR - 1);
+		y = WIN_HEIGHT / 2 * (2 - ZOOM_FACTOR) + y * (ZOOM_FACTOR - 1);
+/*		x -= (x - WIN_WIDTH / 2);
+		y -= (y - WIN_HEIGHT / 2);*/
+	}
+	else if (4 == button)
+	{
+		s->params2D.zoom /= ZOOM_FACTOR;
+/*x = w/2 -(x-w/2)*(zf-1)¿/zf? = w/2-(x-w/2)*(1-1/zf) 
+ *  = w/2*(1+1-1/zf)-x*(1-1/zf) = w/2*(2-1/zf) - x*(1-1/zf)  ;*/
+		x = WIN_WIDTH / 2 * (2 - 1 / ZOOM_FACTOR) + x * (1 / ZOOM_FACTOR - 1);
+		y = WIN_HEIGHT / 2 * (2 - 1 / ZOOM_FACTOR) + y * (1 / ZOOM_FACTOR - 1);
+/*		x -= (x - WIN_WIDTH / 2);
+		y -= (y - WIN_HEIGHT / 2);*/
+	}
+	printf("Zoom: %f\n", s->params2D.zoom);
+	project2D(s, x, y);
+	return (0);
+}
+
+
 int	main(int nargs, char **args)
 {
 	t_sack		s;
@@ -231,8 +255,9 @@ int	main(int nargs, char **args)
 			if ('j' == args[1][0] || 'm' == args[1][0])
 			{
 				mlx_hook(s.mlx_win, 2, 1L<<0, closewin, NULL);
-				mlx_loop_hook(s.mlx, project2D, &s);
-				printf("Sale de loop_hook\n");
+				mlx_mouse_hook(s.mlx_win, mouse_action, &s);
+				project2D(&s, WIN_WIDTH / 2, WIN_HEIGHT / 2);
+				/*mlx_loop_hook(s.mlx, project2D, &s);*/
 				mlx_loop(s.mlx);
 				return (0);
 			}
