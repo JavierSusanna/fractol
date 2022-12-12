@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/11 01:50:15 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/12 01:58:16 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,13 @@ unsigned int	color(t_quaternion point)
 	while (++i < MAX_ITER && norm2(zc) < 4.0)
 		iter(&zc);
 	if (MAX_ITER == i)
-		return (0x00000000);
+		return (0x00003000);
 	else
-		return (((i * 10) & 7) * 32 + ((i * 10) & 56) * 8192 + ((i * 10) & 448) * 65536);
-		/*return (i * 50 / MAX_ITER * 0x00050505);*/
+	{
+		i = i * 512 / MAX_ITER;
+		return ((i & 7) * 32 + (i & 56) * 8192 + (i & 448) * 65536);
+		/*return (i * 5 / MAX_ITER * 0x00323232);*/
+	}
 
 }
 
@@ -97,12 +100,12 @@ int	project2D(t_sack *s)
 	s->params2D.addr = (unsigned int *)s->img.addr;
 	/*printf("centro c.Im: %f\n", s->params2D.center.k);*/
 	mlx_put_image_to_window(s->mlx, s->mlx_win, s->img.img, 0, 0);
-	point.j = s->params2D.center.k / 30;
+/*	point.j = s->params2D.center.k / 30;
 	point.k = - s->params2D.center.j / 30;
 	s->params2D.center.j += point.j;
 	s->params2D.center.k += point.k;
 	s->params2D.center.j /= 1.0005554;
-	s->params2D.center.k /= 1.0005554;
+	s->params2D.center.k /= 1.0005554;*/
 	return (0);
 }
 
@@ -151,16 +154,11 @@ void	showhelp()
 	printf("Aquí ayuda\n");
 }
 
-t_2Dhypersection	initialise_2D(unsigned int *addr,
-		t_complex z, t_complex c, double zoom)
+t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom)
 {
 	t_2Dhypersection	ret;
 
 	ret.addr = addr;
-	ret.center.r = z.Re;
-	ret.center.i = z.Im;
-	ret.center.j = c.Re;
-	ret.center.k = c.Im;
 	ret.x_vector.r = 0;
 	ret.x_vector.i = 0;
 	ret.x_vector.j = 0;
@@ -173,11 +171,23 @@ t_2Dhypersection	initialise_2D(unsigned int *addr,
 	return (ret);
 }
 
+void	initialise_s(t_sack *s)
+{
+	s->mlx = mlx_init();
+	s->mlx_win = mlx_new_window(s->mlx, WIN_WIDTH, WIN_HEIGHT, "Prueba");
+	s->img.img = mlx_new_image(s->mlx, WIN_WIDTH, WIN_HEIGHT);
+	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel, 
+			&s->img.line_length, &s->img.endian);
+	s->params2D = initialise_2D((unsigned int*)s->img.addr, 1.0);
+
+}
+
 int closewin(int keycode)
 {
-	if (keycode)
+	printf("Código de tecla: %d\n", keycode);
+	if (53 == keycode)
 		exit(EXIT_SUCCESS);
-	printf("Cerrando ventana\n");
+	printf("No cerrando ventana\n");
 	return (0);
 }
 
@@ -186,18 +196,12 @@ int	main(int nargs, char **args)
 	t_sack		s;
 	t_complex	z;
 	t_complex	c;
-	double		step;
 
 	if (nargs > 1)
 	{
-		s.mlx = mlx_init();
-		s.mlx_win = mlx_new_window(s.mlx, WIN_WIDTH, WIN_HEIGHT, "Prueba");
-		s.img.img = mlx_new_image(s.mlx, WIN_WIDTH, WIN_HEIGHT);
-		s.img.addr = mlx_get_data_addr(s.img.img, &s.img.bits_per_pixel, 
-				&s.img.line_length, &s.img.endian);
+		initialise_s(&s);
 		printf("bpp: %d\nline_length: %d\nendian: %d\n", s.img.bits_per_pixel, 
 				s.img.line_length, s.img.endian);
-		step = 0.001;
 		c.Re = 0;
 		c.Im = 0;
 		z.Re = 0;
@@ -209,17 +213,15 @@ int	main(int nargs, char **args)
 		}
 		if (c.Re * c.Re < 4 && c.Im * c.Im < 4)
 		{
-			s.params2D = initialise_2D((unsigned int*)s.img.addr, z, c, 1.0);
+			s.params2D.center.r = z.Re;
+			s.params2D.center.i = z.Im;
+			s.params2D.center.j = c.Re;
+			s.params2D.center.k = c.Im;
 			printf("2Dhs.addr, img.addr= %p, %p\n", s.params2D.addr, s.img.addr);
 			if ('j' == args[1][0])
 			{
 				s.params2D.x_vector.r = 1.0;
 				s.params2D.y_vector.i = 1.0;
-/*				params2D.center.k += step;
-				if (params2D.center.k > 0.02 || params2D.center.k < -0.02)
-					step *= -1;
-				mlx_loop(mlx);
-				return (0);*/
 			}
 			if ('m' == args[1][0])
 			{
