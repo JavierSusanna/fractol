@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/12 01:58:16 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/12 02:06:04 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ unsigned int	color(t_quaternion point)
 	while (++i < MAX_ITER && norm2(zc) < 4.0)
 		iter(&zc);
 	if (MAX_ITER == i)
-		return (0x00003000);
+		return (0x8000d000);
 	else
 	{
 		i = i * 512 / MAX_ITER;
@@ -100,12 +100,12 @@ int	project2D(t_sack *s)
 	s->params2D.addr = (unsigned int *)s->img.addr;
 	/*printf("centro c.Im: %f\n", s->params2D.center.k);*/
 	mlx_put_image_to_window(s->mlx, s->mlx_win, s->img.img, 0, 0);
-/*	point.j = s->params2D.center.k / 30;
+	point.j = s->params2D.center.k / 30;
 	point.k = - s->params2D.center.j / 30;
 	s->params2D.center.j += point.j;
 	s->params2D.center.k += point.k;
 	s->params2D.center.j /= 1.0005554;
-	s->params2D.center.k /= 1.0005554;*/
+	s->params2D.center.k /= 1.0005554;
 	return (0);
 }
 
