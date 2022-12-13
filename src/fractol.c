@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/13 08:39:11 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/13 11:34:44 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	iter(t_quaternion *zc)
 	zc->i = tmp.r * tmp.i * 2 + tmp.k;
 }
 
-unsigned int	color(t_quaternion point)
+unsigned int	color(int scheme, t_quaternion point)
 {
 	unsigned int	i;
 	t_quaternion	zc;
@@ -53,15 +53,29 @@ unsigned int	color(t_quaternion point)
 	i = -1;
 	while (++i < MAX_ITER && norm2(zc) < 4.0)
 		iter(&zc);
-	if (MAX_ITER == i)
-		return (0x0000d000);
-	else
+	if (0 == scheme)
 	{
-		i = i * 512 / MAX_ITER;
-		return ((i & 7) * 32 + (i & 56) * 8192 + (i & 448) * 65536);
-		/*return (i * 5 / MAX_ITER * 0x00323232);*/
+		if (MAX_ITER == i)
+			return (0xf0000000);
+		else
+		{
+			i = i * 512 / MAX_ITER;
+			return ((i & 7) * 32 + (i & 56) * 8192 + (i & 448) * 65536
+				   + ((255 - (i>>1))<<24));
+			/*return (i * 5 / MAX_ITER * 0x00323232);*/
+		}
 	}
-
+	else	
+	{
+		if (MAX_ITER == i)
+			return (0x00000000);
+		else
+		{
+			i = i * 512 / MAX_ITER;
+			return ((i & 7) * 32 + (i & 56) * 8192 + (i & 448) * 65536);
+			/*return (i * 5 / MAX_ITER * 0x00323232);*/
+		}
+	}
 }
 
 void	pixel_axis(t_2Dhypersection sect, 
@@ -74,7 +88,7 @@ void	pixel_axis(t_2Dhypersection sect,
 	*y_axis = q_by_scalar(sect.y_vector, sc);
 }
 
-int	project2D(t_sack s)
+int	project2D(t_sack s, int colors)
 {
 	int				x;
 	int				y;
@@ -91,7 +105,7 @@ int	project2D(t_sack s)
 		x0 = q_add(x0, q_by_scalar(y_axis, y - WIN_HEIGHT / 2));
 		x = -1;
 		while (++x < WIN_WIDTH)
-			*(s.params2D.addr++) = color(q_add(x0, q_by_scalar(x_axis, x)));
+			*(s.params2D.addr++) = color(colors, q_add(x0, q_by_scalar(x_axis, x)));
 	}
 /*	s->params2D.addr = (unsigned int *)s->img.addr;*/
 	mlx_put_image_to_window(s.mlx, s.mlx_win, s.img.img, 0, 0);
@@ -102,6 +116,26 @@ int	project2D(t_sack s)
 	s->params2D.center.j /= 1.0005554;
 	s->params2D.center.k /= 1.0005554;*/
 	return (0);
+}
+
+void	pile3D(t_sack s)
+{
+	int				z;
+	t_quaternion	z_axis;
+
+	z_axis.r = 0;
+	z_axis.i = 0;
+	z_axis.j = 0;
+	z_axis.k = -1;
+
+	z_axis = q_by_scalar(z_axis, 4.0 / (WIN_WIDTH * s.params2D.zoom));
+	z = 0;
+	while (z < WIN_HEIGHT / 10)
+	{
+		project2D(s, 0);
+		z++;
+		s.params2D.center = q_add(s.params2D.center, z_axis);
+	}
 }
 
 double	ft_strtof(char *str)
@@ -210,30 +244,18 @@ int mouse_action(int button, int x, int y, t_sack *s)
 {
 	if (5 == button)
 		zoom_at(x, y, ZOOM_FACTOR, s);
-/*	{*/		
-/*		s->params2D.zoom *= ZOOM_FACTOR;*/
-/*x = w/2 +(1-1/zf)*(x-w/2)*zf = w/2+(zf-1)(x-w/2)=w/2*(1-zf+1) +x(zf-1);*/
-/*		x = WIN_WIDTH / 2 * (2 - ZOOM_FACTOR) + x * (ZOOM_FACTOR - 1);*/
-/*		y = WIN_HEIGHT / 2 * (2 - ZOOM_FACTOR) + y * (ZOOM_FACTOR - 1);*/
-/*		x -= (x - WIN_WIDTH / 2);*/
-/*		y -= (y - WIN_HEIGHT / 2);*/
-/*	}*/
 	else if (4 == button)
 		zoom_at(x, y, 1.0 / ZOOM_FACTOR, s);
-/*	{*/
-/*		s->params2D.zoom /= ZOOM_FACTOR;*/
-/*x = w/2 -(x-w/2)*(zf-1)¿/zf? = w/2-(x-w/2)*(1-1/zf)*/
-/*  = w/2*(1+1-1/zf)-x*(1-1/zf) = w/2*(2-1/zf) - x*(1-1/zf)  ;*/
-/*		x =WIN_WIDTH/ 2 * (2 - 1 / ZOOM_FACTOR) + x * (1 / ZOOM_FACTOR - 1);*/
-/*		y =WIN_HEIGHT/ 2 * (2 - 1 / ZOOM_FACTOR) + y * (1 / ZOOM_FACTOR - 1);*/
-/*		x -= (x - WIN_WIDTH / 2);*/
-/*		y -= (y - WIN_HEIGHT / 2);*/
-/*	}*/
+	else if (2 == button)
+	{
+		printf("Zoom: %f ", s->params2D.zoom);
+		printf("at %f, %f\n", s->params2D.center.r, s->params2D.center.i);
+		pile3D(*s);
+		return (0);
+	}
 	else
 		zoom_at(x, y, 1.0, s);
-	printf("Zoom: %f ", s->params2D.zoom);
-	printf("at %f, %f\n", s->params2D.center.r, s->params2D.center.i);
-	project2D(*s);
+	project2D(*s, 1);
 	return (0);
 }
 
@@ -264,7 +286,6 @@ int	main(int nargs, char **args)
 			s.params2D.center.i = z.Im;
 			s.params2D.center.j = c.Re;
 			s.params2D.center.k = c.Im;
-			printf("2Dhs.addr, img.addr= %p, %p\n", s.params2D.addr, s.img.addr);
 			if ('j' == args[1][0])
 			{
 				s.params2D.x_vector.r = 1.0;
@@ -279,8 +300,7 @@ int	main(int nargs, char **args)
 			{
 				mlx_hook(s.mlx_win, 2, 1L<<0, closewin, NULL);
 				mlx_mouse_hook(s.mlx_win, mouse_action, &s);
-				project2D(s);
-				/*mlx_loop_hook(s.mlx, project2D, &s);*/
+				project2D(s, 1);
 				mlx_loop(s.mlx);
 				return (0);
 			}
