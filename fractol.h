@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/13 12:09:14 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/13 15:56:49 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 # include <mlx.h>
 
 
-# define WIN_WIDTH 1000
-# define WIN_HEIGHT 600
+# define WIN_WIDTH 2000
+# define WIN_HEIGHT 1200
 # define MAX_ITER 50
 # define ZOOM_FACTOR 2
 

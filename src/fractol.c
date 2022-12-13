@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/13 11:34:44 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/13 15:55:07 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ unsigned int	color(int scheme, t_quaternion point)
 	unsigned int	i;
 	t_quaternion	zc;
 
+	if (-1 == scheme)
+		return (0);
 	zc = point;
 	i = -1;
 	while (++i < MAX_ITER && norm2(zc) < 4.0)
@@ -56,12 +58,18 @@ unsigned int	color(int scheme, t_quaternion point)
 	if (0 == scheme)
 	{
 		if (MAX_ITER == i)
-			return (0xf0000000);
+			return (0xfe000000);
 		else
 		{
-			i = i * 512 / MAX_ITER;
-			return ((i & 7) * 32 + (i & 56) * 8192 + (i & 448) * 65536
-				   + ((255 - (i>>1))<<24));
+			i = i * 5 / MAX_ITER;
+			if (3 < i)
+				return (0xf0ffffff);
+			else if (3 == i)
+				return (0xfcffffff);
+			else
+				return (0xff000000);
+			/*return ((i & 7) * 32 + (i & 56) * 8192 + (i & 448) * 65536
+				   + ((255 - ((1024 + i)>>2))<<24));*/
 			/*return (i * 5 / MAX_ITER * 0x00323232);*/
 		}
 	}
@@ -109,6 +117,7 @@ int	project2D(t_sack s, int colors)
 	}
 /*	s->params2D.addr = (unsigned int *)s->img.addr;*/
 	mlx_put_image_to_window(s.mlx, s.mlx_win, s.img.img, 0, 0);
+	mlx_do_sync(s.mlx);
 /*	point.j = s->params2D.center.k / 30;
 	point.k = - s->params2D.center.j / 30;
 	s->params2D.center.j += point.j;
@@ -123,15 +132,18 @@ void	pile3D(t_sack s)
 	int				z;
 	t_quaternion	z_axis;
 
-	z_axis.r = 0;
+	z_axis.r = -5.0 * s.params2D.x_vector.j;
 	z_axis.i = 0;
 	z_axis.j = 0;
-	z_axis.k = -1;
+	z_axis.k = -s.params2D.x_vector.r;
 
+	project2D(s, -1);
 	z_axis = q_by_scalar(z_axis, 4.0 / (WIN_WIDTH * s.params2D.zoom));
 	z = 0;
 	while (z < WIN_HEIGHT / 10)
 	{
+		printf("z.k = %f", s.params2D.center.k);
+		printf("\r");
 		project2D(s, 0);
 		z++;
 		s.params2D.center = q_add(s.params2D.center, z_axis);
