@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/12 17:37:43 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/13 08:39:11 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,29 +74,27 @@ void	pixel_axis(t_2Dhypersection sect,
 	*y_axis = q_by_scalar(sect.y_vector, sc);
 }
 
-int	project2D(t_sack *s, int x, int y)
+int	project2D(t_sack s)
 {
+	int				x;
+	int				y;
 	t_quaternion	x_axis;
 	t_quaternion	y_axis;
 	t_quaternion	x0;
 	
 	/*falta verificar que x_vect e y_vect son perpendiculares y normales*/
-	/*printf("Entra a crear imagen... ");*/
-	pixel_axis(s->params2D, &x_axis, &y_axis);
-	s->params2D.center = q_add(s->params2D.center, q_by_scalar(x_axis, x - WIN_WIDTH / 2));
-	s->params2D.center = q_add(s->params2D.center, q_by_scalar(y_axis, y - WIN_HEIGHT / 2));
+	pixel_axis(s.params2D, &x_axis, &y_axis);
 	y = -1;
 	while (++y < WIN_HEIGHT)
 	{
-		x0 = q_add(s->params2D.center, q_by_scalar(x_axis, -1 - WIN_WIDTH / 2));
+		x0 = q_add(s.params2D.center, q_by_scalar(x_axis, -1 - WIN_WIDTH / 2));
 		x0 = q_add(x0, q_by_scalar(y_axis, y - WIN_HEIGHT / 2));
 		x = -1;
 		while (++x < WIN_WIDTH)
-			*(s->params2D.addr++) = color(q_add(x0, q_by_scalar(x_axis, x)));
+			*(s.params2D.addr++) = color(q_add(x0, q_by_scalar(x_axis, x)));
 	}
-	s->params2D.addr = (unsigned int *)s->img.addr;
-	/*printf("centro c.Im: %f\n", s->params2D.center.k);*/
-	mlx_put_image_to_window(s->mlx, s->mlx_win, s->img.img, 0, 0);
+/*	s->params2D.addr = (unsigned int *)s->img.addr;*/
+	mlx_put_image_to_window(s.mlx, s.mlx_win, s.img.img, 0, 0);
 /*	point.j = s->params2D.center.k / 30;
 	point.k = - s->params2D.center.j / 30;
 	s->params2D.center.j += point.j;
@@ -179,6 +177,26 @@ void	initialise_s(t_sack *s)
 
 }
 
+void	zoom_at(int x, int y, double zf, t_sack *s)
+{
+	t_quaternion	x_axis;
+	t_quaternion	y_axis;
+
+	pixel_axis(s->params2D, &x_axis, &y_axis);
+	s->params2D.center = q_add(s->params2D.center,
+			q_by_scalar(x_axis, (x - WIN_WIDTH / 2)));
+	s->params2D.center = q_add(s->params2D.center,
+			q_by_scalar(y_axis, (y - WIN_HEIGHT / 2)));
+	if (zf != 1.0)
+	{
+		s->params2D.center = q_add(s->params2D.center,
+				q_by_scalar(x_axis, (WIN_WIDTH / 2 - x) / zf));
+		s->params2D.center = q_add(s->params2D.center,
+				q_by_scalar(y_axis, (WIN_HEIGHT / 2 - y) / zf));
+	}
+	s->params2D.zoom *= zf;
+}
+
 int closewin(int keycode)
 {
 	printf("Código de tecla: %d\n", keycode);
@@ -191,26 +209,31 @@ int closewin(int keycode)
 int mouse_action(int button, int x, int y, t_sack *s)
 {
 	if (5 == button)
-	{
-		s->params2D.zoom *= ZOOM_FACTOR;
+		zoom_at(x, y, ZOOM_FACTOR, s);
+/*	{*/		
+/*		s->params2D.zoom *= ZOOM_FACTOR;*/
 /*x = w/2 +(1-1/zf)*(x-w/2)*zf = w/2+(zf-1)(x-w/2)=w/2*(1-zf+1) +x(zf-1);*/
-		x = WIN_WIDTH / 2 * (2 - ZOOM_FACTOR) + x * (ZOOM_FACTOR - 1);
-		y = WIN_HEIGHT / 2 * (2 - ZOOM_FACTOR) + y * (ZOOM_FACTOR - 1);
-/*		x -= (x - WIN_WIDTH / 2);
-		y -= (y - WIN_HEIGHT / 2);*/
-	}
+/*		x = WIN_WIDTH / 2 * (2 - ZOOM_FACTOR) + x * (ZOOM_FACTOR - 1);*/
+/*		y = WIN_HEIGHT / 2 * (2 - ZOOM_FACTOR) + y * (ZOOM_FACTOR - 1);*/
+/*		x -= (x - WIN_WIDTH / 2);*/
+/*		y -= (y - WIN_HEIGHT / 2);*/
+/*	}*/
 	else if (4 == button)
-	{
-		s->params2D.zoom /= ZOOM_FACTOR;
-/*x = w/2 -(x-w/2)*(zf-1)¿/zf? = w/2-(x-w/2)*(1-1/zf) 
- *  = w/2*(1+1-1/zf)-x*(1-1/zf) = w/2*(2-1/zf) - x*(1-1/zf)  ;*/
-		x = WIN_WIDTH / 2 * (2 - 1 / ZOOM_FACTOR) + x * (1 / ZOOM_FACTOR - 1);
-		y = WIN_HEIGHT / 2 * (2 - 1 / ZOOM_FACTOR) + y * (1 / ZOOM_FACTOR - 1);
-/*		x -= (x - WIN_WIDTH / 2);
-		y -= (y - WIN_HEIGHT / 2);*/
-	}
-	printf("Zoom: %f\n", s->params2D.zoom);
-	project2D(s, x, y);
+		zoom_at(x, y, 1.0 / ZOOM_FACTOR, s);
+/*	{*/
+/*		s->params2D.zoom /= ZOOM_FACTOR;*/
+/*x = w/2 -(x-w/2)*(zf-1)¿/zf? = w/2-(x-w/2)*(1-1/zf)*/
+/*  = w/2*(1+1-1/zf)-x*(1-1/zf) = w/2*(2-1/zf) - x*(1-1/zf)  ;*/
+/*		x =WIN_WIDTH/ 2 * (2 - 1 / ZOOM_FACTOR) + x * (1 / ZOOM_FACTOR - 1);*/
+/*		y =WIN_HEIGHT/ 2 * (2 - 1 / ZOOM_FACTOR) + y * (1 / ZOOM_FACTOR - 1);*/
+/*		x -= (x - WIN_WIDTH / 2);*/
+/*		y -= (y - WIN_HEIGHT / 2);*/
+/*	}*/
+	else
+		zoom_at(x, y, 1.0, s);
+	printf("Zoom: %f ", s->params2D.zoom);
+	printf("at %f, %f\n", s->params2D.center.r, s->params2D.center.i);
+	project2D(*s);
 	return (0);
 }
 
@@ -256,7 +279,7 @@ int	main(int nargs, char **args)
 			{
 				mlx_hook(s.mlx_win, 2, 1L<<0, closewin, NULL);
 				mlx_mouse_hook(s.mlx_win, mouse_action, &s);
-				project2D(&s, WIN_WIDTH / 2, WIN_HEIGHT / 2);
+				project2D(s);
 				/*mlx_loop_hook(s.mlx, project2D, &s);*/
 				mlx_loop(s.mlx);
 				return (0);
