@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/13 15:56:49 by fsusanna         ###   ########.fr       */
+/*   Updated: 2022/12/28 22:07:25 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 # include <mlx.h>
 
 
-# define WIN_WIDTH 2000
-# define WIN_HEIGHT 1200
+# define WIN_WIDTH 1600
+# define WIN_HEIGHT 960
 # define MAX_ITER 50
 # define ZOOM_FACTOR 2
 
@@ -74,6 +74,9 @@ typedef struct	s_sack
 	void				*mlx_win;
 	t_data				img;
 	t_2Dhypersection	params2D;
+	unsigned int		mouse_buttons;
+	int					points;
+	t_quaternion		voxels[1000];
 }				t_sack;
 
 typedef struct	s_
