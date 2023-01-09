@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2022/12/28 22:07:25 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/09 02:32:10 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,10 @@ typedef struct	s_sack
 	t_data				img;
 	t_2Dhypersection	params2D;
 	unsigned int		mouse_buttons;
+	int					mouse_x;
+	int					mouse_y;
 	int					points;
-	t_quaternion		voxels[1000];
+	t_quaternion		voxels[10000];
 }				t_sack;
 
 typedef struct	s_
