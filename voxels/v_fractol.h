@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/09 23:09:48 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/10 16:33:21 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,9 @@ typedef struct	s_mouse_state
 
 typedef struct	s_cloud
 {
-	int					points;
-	t_quaternion		voxels[10946];
+	int				points;
+	t_quaternion	voxels[10946];
+	unsigned int	color[10946];
 }				t_cloud;
 
 typedef struct	s_sack

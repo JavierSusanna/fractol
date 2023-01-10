@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 08:41:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/09 23:47:58 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/10 13:25:23 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void	plot(t_sack s, int paint)
 		y = (s.cloud.voxels[n].k + 1) * WIN_HEIGHT / 2;
 		if (s.cloud.voxels[n].j < 0)
 			*(addr + y * WIN_WIDTH + x) = col;
+		else
+			*(addr + y * WIN_WIDTH + x) = col / 15 * 8;
 /*		mlx_pixel_put(s.mlx, s.mlx_win, 
 				s.cloud.voxels[n].i * WIN_HEIGHT / 2 + WIN_WIDTH / 2, 
 				(s.cloud.voxels[n].k + 1) * WIN_HEIGHT / 2, 0x00ffffff);*/
@@ -47,12 +49,12 @@ void	vsphere(t_sack *s)
 	double	n2;
 
 	alpha1 = M_PI * (3 - sqrt(5));
-	n1 = s->num/10946.0;
+	n1 = s->num/10946.0 * (s->cloud.points - 1);
 	n = -1;
 	while (++n < s->cloud.points)
 	{
 		alpha = alpha1 * n;
-		n2 = (((double)n * n1) - (int)(n * n1)) * n;
+		n2 = (((double)n * n1) - (s->cloud.points - 1) * (int)((double)n * n1 / (s->cloud.points - 1)));
 		s->cloud.voxels[n].k = (1.0 - (double)(2 * n2) / (s->cloud.points - 1)) * 0.9;
 		s->cloud.voxels[n].i = cos(alpha) * sqrt(0.81 - s->cloud.voxels[n].k * s->cloud.voxels[n].k);
 		s->cloud.voxels[n].j = sin(alpha) * sqrt(0.81 - s->cloud.voxels[n].k * s->cloud.voxels[n].k);
@@ -69,7 +71,7 @@ void	initialise_s(t_sack *s)
 			&s->img.line_length, &s->img.endian);
 	s->mouse.buttons = 0;
 	s->cloud.points = 10946;
-	s->num = 8972;
+	s->num = 6764.0 * (1.0 + (3-sqrt(5))/2/10946);
 }
 
 int closewin(int keycode, t_sack *s)
@@ -78,13 +80,14 @@ int closewin(int keycode, t_sack *s)
 	if (53 == keycode)
 		exit(EXIT_SUCCESS);
 	if (12 == keycode)
-		s->num += .10;
+		s->num += .010;
 	if (0 == keycode)
-		s->num -= .10;
+		s->num -= .010;
 	if (13 == keycode)
-		s->num++;
+		s->num += .001;
 	if (1 == keycode)
-		s->num--;
+		s->num -= .001;
+	printf("num: %f\n", s->num);
 	plot(*s, 0);
 	vsphere(s);
 	return (0);

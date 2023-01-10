@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/09 19:52:56 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/10 15:18:09 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,11 @@ t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom)
 	return (ret);
 }
 
-void	initialise_s(t_sack *s)
+void	initialise_s(t_sack *s, char *win_name)
 {
 	s->mlx = mlx_init();
-	s->mlx_win = mlx_new_window(s->mlx, WIN_WIDTH, WIN_HEIGHT, "Prueba");
+	s->type = win_name[0];
+	s->mlx_win = mlx_new_window(s->mlx, WIN_WIDTH, WIN_HEIGHT, win_name);
 	s->img.img = mlx_new_image(s->mlx, WIN_WIDTH, WIN_HEIGHT);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel, 
 			&s->img.line_length, &s->img.endian);
@@ -67,23 +68,29 @@ void	initialise_s(t_sack *s)
 
 int	main(int nargs, char **args)
 {
-	t_sack			s;
+	t_sack			sm;
+	t_sack			sj;
 	t_quaternion	zc;
 
 	if (nargs > 1)
 	{
-		initialise_s(&s);
-		printf("bpp: %d\nline_length: %d\nendian: %d\n", s.img.bits_per_pixel, 
-				s.img.line_length, s.img.endian);
-		zc = q_by_scalar(s.params2D.x_vector, 0);
+		sj.other = (void*)&sm;
+		sm.other = (void*)&sj;
+		initialise_s(&sm, "Mandelbrot");
+		initialise_s(&sj, "Julia");
+/*		printf("bpp: %d\nline_length: %d\nendian: %d\n", s.img.bits_per_pixel, 
+				s.img.line_length, s.img.endian);*/
+		zc = q_by_scalar(sm.params2D.x_vector, 0);
 		if (nargs > 3)
 		{
 			zc.j = ft_strtof(args[2]);
 			zc.k = ft_strtof(args[3]);
 		}
-		s.params2D.center = zc;
-		if ('j' == args[1][0] || 'm' == args[1][0])
-			show_image(args[1][0], &s);
+		sj.params2D.center = zc;
+		if ('j' == args[1][0])
+			show_image(&sj);
+		else if ('m' == args[1][0])
+			show_image(&sm);
 	}
 	showhelp();
 	return (-1);

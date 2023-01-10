@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/10 02:06:05 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/10 18:00:17 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,14 @@ int key_press(int keycode, t_sack *s)
 	if (53 == keycode)
 		exit(EXIT_SUCCESS);
 	if (257 == keycode)
-		s->mouse.buttons |= 128;
-	printf("No cerrando ventana\n");
+		s->user.buttons |= 128;
 	return (0);
 }
 
 int key_release(int keycode, t_sack *s)
 {
 	if (257 == keycode)
-		s->mouse.buttons &= 0xffffffff ^ 128;
+		s->user.buttons &= 0xffffffff ^ 128;
 	return (0);
 }
 
@@ -36,7 +35,7 @@ int mouse_press(int button, int x, int y, t_sack *s)
 		zoom_at(x, y, ZOOM_FACTOR, s);
 	else if (4 == button)
 		zoom_at(x, y, 1.0 / ZOOM_FACTOR, s);
-	else if (2 == button && !(s->mouse.buttons & 128))
+	else if (2 == button && !(s->user.buttons & 128))
 	{
 		printf("Zoom: %f ", s->params2D.zoom);
 		printf("at %f, %f\n", s->params2D.center.r, s->params2D.center.i);
@@ -57,7 +56,7 @@ int mouse_release(int button, int x, int y, t_sack *s)
 		zoom_at(x, y, ZOOM_FACTOR, s);
 	else if (4 == button)
 		zoom_at(x, y, 1.0 / ZOOM_FACTOR, s);
-	else if (2 == button && !(s->mouse.buttons & 128))
+	else if (2 == button && !(s->user.buttons & 128))
 	{
 		printf("Zoom: %f ", s->params2D.zoom);
 		printf("at %f, %f\n", s->params2D.center.r, s->params2D.center.i);
@@ -72,14 +71,14 @@ int mouse_release(int button, int x, int y, t_sack *s)
 	return (0);
 }
 
-void	show_image(char type, t_sack *s)
+void	show_image(t_sack *s)
 {
-	if ('j' == type)
+	if ('J' == s->type)
 	{
 		s->params2D.x_vector.r = 1.0;
 		s->params2D.y_vector.i = 1.0;
 	}
-	if ('m' == type)
+	if ('M' == s->type)
 	{
 		s->params2D.x_vector.j = 1.0;
 		s->params2D.y_vector.k = 1.0;

@@ -1,17 +1,31 @@
-		q_add	:quatmath
-	q_by_scalar	:quatmath
-		norm2	:quatmath
-		iter	:quatmath
-		color	:manage2D
-	pixel_axis	:quatmath
-	project2D	:manage2D
-		pile3D	:manage2D
-	ft_strtof	:fractol
-	showhelp	:fractol
-		zoom_at	:manage2D
-	closewin	:events2D
-mouse_action	:events2D
-initialise_2D	:fractol
-initialise_s	:fractol
-	show_image	:events2D
-		main	:fractol
+:quatmath
+q_add
+q_by_scalar
+norm2
+iter
+pixel_axis
+
+:manage2D
+color
+project2D
+pile3D
+zoom_at
+
+:tools2D
+show_mandel
+show_julia
+line
+
+:events_mandel
+key_press
+key_release
+mouse_press
+mouse_release
+mouse_action
+
+:fractol
+ft_strtof	
+showhelp	
+initialise_2D
+initialise_s
+main		
