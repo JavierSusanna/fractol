@@ -1,0 +1,17 @@
+		q_add	:quatmath
+	q_by_scalar	:quatmath
+		norm2	:quatmath
+		iter	:quatmath
+		color	:manage2D
+	pixel_axis	:quatmath
+	project2D	:manage2D
+		pile3D	:manage2D
+	ft_strtof	:fractol
+	showhelp	:fractol
+		zoom_at	:manage2D
+	closewin	:events2D
+mouse_action	:events2D
+initialise_2D	:fractol
+initialise_s	:fractol
+	show_image	:events2D
+		main	:fractol

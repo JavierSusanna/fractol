@@ -6,30 +6,34 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 08:41:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/09 02:32:06 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/09 23:47:58 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../fractol.h"
+#include "../v_fractol.h"
 
-void	plot(t_sack s)
+void	plot(t_sack s, int paint)
 {
 	int				n;
 	int				x;
 	int				y;
 	unsigned int	*addr;
+	unsigned int	col;
 
 	addr = (unsigned int *)s.img.addr;
+	col = 0x00ffffff;
+	if (!paint)
+		col = 0x0;
 	n = -1;
-	while (++n < s.points)
+	while (++n < s.cloud.points)
 	{
-		x = s.voxels[n].i * WIN_HEIGHT / 2 + WIN_WIDTH / 2;
-		y = (s.voxels[n].k + 1) * WIN_HEIGHT / 2;
-		if (s.voxels[n].j < 0)
-			*(addr + y * WIN_WIDTH + x) = 0x00ffffff;
+		x = s.cloud.voxels[n].i * WIN_HEIGHT / 2 + WIN_WIDTH / 2;
+		y = (s.cloud.voxels[n].k + 1) * WIN_HEIGHT / 2;
+		if (s.cloud.voxels[n].j < 0)
+			*(addr + y * WIN_WIDTH + x) = col;
 /*		mlx_pixel_put(s.mlx, s.mlx_win, 
-				s.voxels[n].i * WIN_HEIGHT / 2 + WIN_WIDTH / 2, 
-				(s.voxels[n].k + 1) * WIN_HEIGHT / 2, 0x00ffffff);*/
+				s.cloud.voxels[n].i * WIN_HEIGHT / 2 + WIN_WIDTH / 2, 
+				(s.cloud.voxels[n].k + 1) * WIN_HEIGHT / 2, 0x00ffffff);*/
 	}
 	mlx_put_image_to_window(s.mlx, s.mlx_win, s.img.img, 0, 0);
 }
@@ -39,17 +43,21 @@ void	vsphere(t_sack *s)
 	int		n;
 	double	alpha1;
 	double	alpha;
+	double	n1;
+	double	n2;
 
 	alpha1 = M_PI * (3 - sqrt(5));
+	n1 = s->num/10946.0;
 	n = -1;
-	while (++n < s->points)
+	while (++n < s->cloud.points)
 	{
 		alpha = alpha1 * n;
-		s->voxels[n].k = (1.0 - (double)(2 * n) / (s->points - 1)) * 0.9;
-		s->voxels[n].i = cos(alpha) * sqrt(0.81 - s->voxels[n].k * s->voxels[n].k);
-		s->voxels[n].j = sin(alpha) * sqrt(0.81 - s->voxels[n].k * s->voxels[n].k);
+		n2 = (((double)n * n1) - (int)(n * n1)) * n;
+		s->cloud.voxels[n].k = (1.0 - (double)(2 * n2) / (s->cloud.points - 1)) * 0.9;
+		s->cloud.voxels[n].i = cos(alpha) * sqrt(0.81 - s->cloud.voxels[n].k * s->cloud.voxels[n].k);
+		s->cloud.voxels[n].j = sin(alpha) * sqrt(0.81 - s->cloud.voxels[n].k * s->cloud.voxels[n].k);
 	}
-	plot(*s);
+	plot(*s, 1);
 }
 
 void	initialise_s(t_sack *s)
@@ -59,29 +67,41 @@ void	initialise_s(t_sack *s)
 	s->img.img = mlx_new_image(s->mlx, WIN_WIDTH, WIN_HEIGHT);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel,
 			&s->img.line_length, &s->img.endian);
-	s->mouse_buttons = 0;
-	s->points = 10000;
+	s->mouse.buttons = 0;
+	s->cloud.points = 10946;
+	s->num = 8972;
 }
 
-int closewin(int keycode)
+int closewin(int keycode, t_sack *s)
 {
+	printf("keycode: %d\n", keycode);
 	if (53 == keycode)
 		exit(EXIT_SUCCESS);
+	if (12 == keycode)
+		s->num += .10;
+	if (0 == keycode)
+		s->num -= .10;
+	if (13 == keycode)
+		s->num++;
+	if (1 == keycode)
+		s->num--;
+	plot(*s, 0);
+	vsphere(s);
 	return (0);
 }
 
 int mouse_press(int button, int x, int y, t_sack *s)
 {
 	if (button < 4)
-		s->mouse_buttons |= 1U<<button;
-	s->mouse_x = x;
-	s->mouse_y = y;
+		s->mouse.buttons |= 1U<<button;
+	s->mouse.x = x;
+	s->mouse.y = y;
 	return (0);
 }
 
 int mouse_release(int button, int x, int y, t_sack *s)
 {
-	s->mouse_buttons &= 255 ^ (1U<<button);
+	s->mouse.buttons &= 255 ^ (1U<<button);
 	return (x + y);
 }
 
@@ -90,26 +110,19 @@ void	rotate(t_sack *s, t_quaternion rot)
 	int				n;
 	t_quaternion	tmp;
 	double			aux;
-	int				x;
-	int				y;
-	unsigned int	*addr;
 
-	addr = (unsigned int *)s->img.addr;
 	aux = rot.r * rot.r * 2 - 1;
 	n = -1;
-	while (++n < s->points)
+	while (++n < s->cloud.points)
 	{
-		tmp = s->voxels[n];
-		x = tmp.i * WIN_HEIGHT / 2 + WIN_WIDTH / 2;
-		y = (tmp.k + 1) * WIN_HEIGHT / 2;
-		*(addr + y * WIN_WIDTH + x) = 0x0;
-		s->voxels[n].i = tmp.i * (2 * rot.i * rot.i + aux) 
+		tmp = s->cloud.voxels[n];
+		s->cloud.voxels[n].i = tmp.i * (2 * rot.i * rot.i + aux) 
 			+ 2 * rot.i * (rot.j * tmp.j + rot.k * tmp.k)
 			+ 2 * rot.r * (rot.j * tmp.k - rot.k * tmp.j);
-		s->voxels[n].j = tmp.j * (2 * rot.j * rot.j + aux) 
+		s->cloud.voxels[n].j = tmp.j * (2 * rot.j * rot.j + aux) 
 			+ 2 * rot.j * (rot.k * tmp.k + rot.i * tmp.i)
 			+ 2 * rot.r * (rot.k * tmp.i - rot.i * tmp.k);
-		s->voxels[n].k = tmp.k * (2 * rot.k * rot.k + aux) 
+		s->cloud.voxels[n].k = tmp.k * (2 * rot.k * rot.k + aux) 
 			+ 2 * rot.k * (rot.i * tmp.i + rot.j * tmp.j)
 			+ 2 * rot.r * (rot.i * tmp.j - rot.j * tmp.i);
 	}
@@ -124,23 +137,24 @@ int	mouse_move(int x, int y, t_sack *s)
 	double			costh;
 	double			sinth;
 
-	if (!(s->mouse_buttons))
+	if (!(s->mouse.buttons))
 		return (0);
-	x1 = (double)(x - s->mouse_x);
-	y1 = (double)(y - s->mouse_y);
-	s->mouse_x = x;
-	s->mouse_y = y;
+	x1 = (double)(x - s->mouse.x);
+	y1 = (double)(y - s->mouse.y);
+	s->mouse.x = x;
+	s->mouse.y = y;
 	h1 = hypot(x1, y1);
 	if (!h1)
 		h1 = 1;
-	costh = 1 - h1 / 500000;
+	costh = 1 - h1 / 10000;
 	sinth = sqrt(1 - costh * costh);
 	rotation.r = costh;
 	rotation.i = -sinth * y1 / h1;
 	rotation.j = 0;
 	rotation.k = sinth * x1 / h1;
+	plot(*s, 0);
 	rotate(s, rotation);
-	plot(*s);
+	plot(*s, 1);
 	return (0);
 }
 
@@ -150,7 +164,7 @@ int	main(void)
 
 	initialise_s(&s);
 	vsphere(&s);
-	mlx_hook(s.mlx_win, 2, 1L<<0, closewin, NULL);
+	mlx_hook(s.mlx_win, 2, 1L<<0, closewin, &s);
 	mlx_hook(s.mlx_win, 4, 1L<<2, mouse_press, &s);
 	mlx_hook(s.mlx_win, 5, 1L<<3, mouse_release, &s);
 	mlx_hook(s.mlx_win, 6, 1L<<6, mouse_move, &s);

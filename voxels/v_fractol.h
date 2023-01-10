@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/10 02:02:48 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/09 23:09:48 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ typedef struct	s_mouse_state
 typedef struct	s_cloud
 {
 	int					points;
-	t_quaternion		voxels[10000];
+	t_quaternion		voxels[10946];
 }				t_cloud;
 
 typedef struct	s_sack
@@ -75,12 +75,13 @@ typedef struct	s_sack
 	t_2Dhypersection	params2D;
 	t_mouse_state		mouse;
 	t_cloud				cloud;
+	double				num;
 }				t_sack;
 
 typedef struct	s_
 {
 }				t_;
-
+/*
 t_quaternion		q_add(t_quaternion q1, t_quaternion q2);
 t_quaternion		q_by_scalar(t_quaternion q1, double s);
 double				norm2(t_quaternion z);
@@ -91,16 +92,13 @@ unsigned int		color(int scheme, t_quaternion point);
 int					project2D(t_sack s, int colors);
 void				pile3D(t_sack s);
 void				zoom_at(int x, int y, double zf, t_sack *s);
-int 				key_press(int keycode, t_sack *s);
-int 				key_release(int keycode, t_sack *s);
-int 				mouse_press(int button, int x, int y, t_sack *s);
-int 				mouse_release(int button, int x, int y, t_sack *s);
+int 				closewin(int keycode);
+int 				mouse_action(int button, int x, int y, t_sack *s);
 void				show_image(char type, t_sack *s);
-void				show_julia(int x, int y, t_sack s);
 double				ft_strtof(char *str);
 void				showhelp();
 t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom);
 void				initialise_s(t_sack *s);
 int					main(int nargs, char **args);
-
+*/
 #endif

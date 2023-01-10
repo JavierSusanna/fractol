@@ -1,12 +1,12 @@
 ### FILES AND DIRECTORIES ###
-NAME = fractol
+NAME = v_fractol
 GC = gcc
 CFLAGS = -Wall -Werror -Wextra -std=c89
 INCLUDES = include
 
 DIR_FRACTOL = src/
 FILES_FRACTOL = \
-	fractol events2D manage2D quatmath
+		v_fractol
 
 FILES_SRC += $(addprefix $(DIR_FRACTOL), $(FILES_FRACTOL))
 
@@ -49,12 +49,12 @@ bonus: all
 clean:
 	@make clean -C mlx
 	@rm -rf $(DIR_OBJ)
-	@echo "-FRACTOL- OBJECTS DELETED. CLEAN SUCCESSFUL!"
+	@echo "-V_FRACTOL- OBJECTS DELETED. CLEAN SUCCESSFUL!"
 
 fclean: clean
 	@rm -rf mlx/libmlx.a
 	@rm -rf $(NAME)
 	@echo "-MLX- LIBRARY DELETED. CLEAN SUCCESSFUL!"
-	@echo "-FRACTOL- LIBRARY DELETED. CLEAN SUCCESSFUL!"
+	@echo "-V_FRACTOL- LIBRARY DELETED. CLEAN SUCCESSFUL!"
 
 re:	fclean all
