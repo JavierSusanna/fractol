@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/10 16:33:21 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/16 18:53:59 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ typedef struct	s_sack
 	void				*mlx_win;
 	t_data				img;
 	t_2Dhypersection	params2D;
-	t_mouse_state		mouse;
-	t_cloud				cloud;
+	t_mouse_state		user;
+	t_cloud				*cloud;
 	double				num;
 }				t_sack;
 

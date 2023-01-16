@@ -6,13 +6,13 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/09 13:54:15 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/16 21:33:32 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../fractol.h"
 
-unsigned int	color(int scheme, t_quaternion point)
+unsigned int	color(int scheme, t_quaternion point, t_cloud *cloud)
 {
 	unsigned int	i;
 	t_quaternion	zc;
@@ -23,24 +23,32 @@ unsigned int	color(int scheme, t_quaternion point)
 	i = -1;
 	while (++i < MAX_ITER && norm2(zc) < 4.0)
 		iter(&zc);
-	if (0 == scheme)
+/*	if (0 == scheme)
+	{*/
+	if (MAX_ITER == i)
+		return (0xfe000000);
+	else
 	{
-		if (MAX_ITER == i)
-			return (0xfe000000);
-		else
+		i = i * 5 / MAX_ITER;
+		if (3 < i)
 		{
-			i = i * 5 / MAX_ITER;
-			if (3 < i)
-				return (0x00ffff00);
-			else if (3 == i)
-				return (0x00ff0000);
-			else
-				return (0xff000000);
-			/*return ((i & 7) * 32 + (i & 56) * 8192 + (i & 448) * 65536
-				   + ((255 - ((1024 + i)>>2))<<24));*/
-			/*return (i * 5 / MAX_ITER * 0x00323232);*/
+			if (2 == scheme && cloud->points < 109000)
+			{
+				cloud->voxels[cloud->points] = point;
+				cloud->voxels[cloud->points].i = cloud->voxels[cloud->points].r;
+				cloud->points++;
+			}
+			return (0x00ffff00);
 		}
+		else if (3 == i)
+			return (0x00ff0000);
+		else
+			return (0xff000000);
+		/*return ((i & 7) * 32 + (i & 56) * 8192 + (i & 448) * 65536
+			   + ((255 - ((1024 + i)>>2))<<24));*/
+		/*return (i * 5 / MAX_ITER * 0x00323232);*/
 	}
+/*	}
 	else	
 	{
 		if (MAX_ITER == i)
@@ -49,9 +57,9 @@ unsigned int	color(int scheme, t_quaternion point)
 		{
 			i = i * 512 / MAX_ITER;
 			return ((i & 7) * 32 + (i & 56) * 8192 + (i & 448) * 65536);
-			/*return (i * 5 / MAX_ITER * 0x00323232);*/
+			/return (i * 5 / MAX_ITER * 0x00323232);/
 		}
-	}
+	}*/
 }
 
 int	project2D(t_sack s, int colors)
@@ -71,7 +79,7 @@ int	project2D(t_sack s, int colors)
 		x0 = q_add(x0, q_by_scalar(y_axis, y - WIN_HEIGHT / 2));
 		x = -1;
 		while (++x < WIN_WIDTH)
-			*(s.params2D.addr++) = color(colors, q_add(x0, q_by_scalar(x_axis, x)));
+			*(s.params2D.addr++) = color(colors, q_add(x0, q_by_scalar(x_axis, x)), s.cloud);
 	}
 /*	s->params2D.addr = (unsigned int *)s->img.addr;*/
 	mlx_put_image_to_window(s.mlx, s.mlx_win, s.img.img, 0, 0);
@@ -95,15 +103,18 @@ void	pile3D(t_sack s)
 	z_axis.j = 0;
 	z_axis.k = -s.params2D.x_vector.r;
 
+	write(1, "pile3D", 7);
 	project2D(s, -1);
 	z_axis = q_by_scalar(z_axis, 4.0 / (WIN_WIDTH * s.params2D.zoom));
+	s.params2D.center = q_add(s.params2D.center, q_by_scalar(z_axis, -15));
 	z = 0;
-	while (z < WIN_HEIGHT / 5)
+	while (z < WIN_HEIGHT / 10)
 	{
 		printf("z.k = %f", s.params2D.center.k);
 		printf("\r");
-		project2D(s, 0);
+		project2D(s, 2);
 		z++;
+		printf("puntos tras %d capas: %d\n", z, s.cloud->points);
 		s.params2D.center = q_add(s.params2D.center, z_axis);
 	}
 }
@@ -113,6 +124,7 @@ void	zoom_at(int x, int y, double zf, t_sack *s)
 	t_quaternion	x_axis;
 	t_quaternion	y_axis;
 
+	project2D(*s, -1);
 	pixel_axis(s->params2D, &x_axis, &y_axis);
 	s->params2D.center = q_add(s->params2D.center,
 			q_by_scalar(x_axis, (x - WIN_WIDTH / 2)));

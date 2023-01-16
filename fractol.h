@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/16 01:57:22 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/16 20:52:16 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 # include <mlx.h>
 
 
-# define WIN_WIDTH 1600
-# define WIN_HEIGHT 960
+# define WIN_WIDTH 800
+# define WIN_HEIGHT 480
 # define MAX_ITER 50
 # define ZOOM_FACTOR 2
 
@@ -63,8 +63,9 @@ typedef struct	s_user_state
 
 typedef struct	s_cloud
 {
-	int					points;
-	t_quaternion		voxels[10000];
+	int				points;
+	t_quaternion	voxels[109460];
+	unsigned int	color[109460];
 }				t_cloud;
 
 typedef struct	s_sack
@@ -75,8 +76,10 @@ typedef struct	s_sack
 	char				type;
 	t_2Dhypersection	params2D;
 	t_user_state		user;
-	t_cloud				cloud;
+	t_cloud				*cloud;
+	double				num;
 	void				*other;
+	void				*other3D;
 }				t_sack;
 
 typedef struct	s_
@@ -90,20 +93,28 @@ void				iter(t_quaternion *zc);
 void				pixel_axis(t_2Dhypersection sect,
 						t_quaternion *x_axis, t_quaternion *y_axis);
 t_quaternion		pixel_to_quat(int x, int y, t_sack s);
-unsigned int		color(int scheme, t_quaternion point);
+unsigned int		color(int scheme, t_quaternion point, t_cloud *cloud);
 int					project2D(t_sack s, int colors);
 void				pile3D(t_sack s);
+void				switch_wins(t_sack *s);
 void				zoom_at(int x, int y, double zf, t_sack *s);
 int 				key_press(int keycode, t_sack *s);
 int 				key_release(int keycode, t_sack *s);
 int 				mouse_press(int button, int x, int y, t_sack *s);
 int 				mouse_release(int button, int x, int y, t_sack *s);
 void				show_image(t_sack *s);
+/*void				set_axis(t_sack *s);*/
 /*void				show_julia(int x, int y, t_sack s);*/
 double				ft_strtof(char *str);
 void				showhelp();
 t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom);
 void				initialise_s(t_sack *s, char *win_name);
+void				plot(t_sack s, int paint);
+void				rotate(t_sack *s, t_quaternion rot);
+int					vmouse_press(int button, int x, int y, t_sack *s);
+int					vmouse_release(int button, int x, int y, t_sack *s);
+int					vmouse_move(int x, int y, t_sack *s);
+void				open_cloud(t_sack *s);
 int					main(int nargs, char **args);
 
 #endif

@@ -1,7 +1,7 @@
 ### FILES AND DIRECTORIES ###
 NAME = v_fractol
 GC = gcc
-CFLAGS = -Wall -Werror -Wextra -std=c89
+CFLAGS = -Wall -Werror -Wextra -std=c89 -g
 INCLUDES = include
 
 DIR_FRACTOL = src/

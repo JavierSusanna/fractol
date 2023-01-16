@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/10 15:18:09 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/16 20:53:23 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,27 +57,41 @@ t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom)
 
 void	initialise_s(t_sack *s, char *win_name)
 {
-	s->mlx = mlx_init();
 	s->type = win_name[0];
 	s->mlx_win = mlx_new_window(s->mlx, WIN_WIDTH, WIN_HEIGHT, win_name);
 	s->img.img = mlx_new_image(s->mlx, WIN_WIDTH, WIN_HEIGHT);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel, 
 			&s->img.line_length, &s->img.endian);
-	s->params2D = initialise_2D((unsigned int*)s->img.addr, 1.0);
+	(s->cloud)->points = 0;
+	if ('3' == s->type)
+		s->num = 1;
+	else
+		s->params2D = initialise_2D((unsigned int*)s->img.addr, 1.0);
 }
 
 int	main(int nargs, char **args)
 {
 	t_sack			sm;
 	t_sack			sj;
+	t_sack			s3D;
 	t_quaternion	zc;
+	t_cloud			cloud;
 
 	if (nargs > 1)
 	{
-		sj.other = (void*)&sm;
+		sm.mlx = mlx_init();
+		sj.mlx = sm.mlx;
+		s3D.mlx = sm.mlx;
+		sm.cloud = &cloud;
+		sj.cloud = &cloud;
+		s3D.cloud = &cloud;
+		sj.other3D = (void*)&s3D;
+		sm.other3D = (void*)&s3D;
 		sm.other = (void*)&sj;
+		sj.other = (void*)&sm;
 		initialise_s(&sm, "Mandelbrot");
 		initialise_s(&sj, "Julia");
+		initialise_s(&s3D, "3D");
 /*		printf("bpp: %d\nline_length: %d\nendian: %d\n", s.img.bits_per_pixel, 
 				s.img.line_length, s.img.endian);*/
 		zc = q_by_scalar(sm.params2D.x_vector, 0);
@@ -87,10 +101,9 @@ int	main(int nargs, char **args)
 			zc.k = ft_strtof(args[3]);
 		}
 		sj.params2D.center = zc;
-		if ('j' == args[1][0])
-			show_image(&sj);
-		else if ('m' == args[1][0])
-			show_image(&sm);
+		show_image(&sm);
+		show_image(&sj);
+		mlx_loop(sm.mlx);
 	}
 	showhelp();
 	return (-1);

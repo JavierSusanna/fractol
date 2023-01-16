@@ -1,12 +1,12 @@
 ### FILES AND DIRECTORIES ###
 NAME = fractol
 GC = gcc
-CFLAGS = -Wall -Werror -Wextra -std=c89
+CFLAGS = -Wall -Werror -Wextra -std=c89 -g
 INCLUDES = include
 
 DIR_FRACTOL = src/
 FILES_FRACTOL = \
-	fractol events2D manage2D quatmath imagemath
+	fractol events2D manage2D quatmath imagemath voxels
 
 FILES_SRC += $(addprefix $(DIR_FRACTOL), $(FILES_FRACTOL))
 

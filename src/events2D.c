@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/16 01:58:38 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/16 20:56:55 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int key_press(int keycode, t_sack *s)
 		exit(EXIT_SUCCESS);
 	if (257 == keycode)
 		s->user.buttons |= 128;
+	if (258 == keycode)
+		show_image(s->other);
 	return (0);
 }
 
@@ -37,43 +39,29 @@ int mouse_press(int button, int x, int y, t_sack *s)
 		zoom_at(x, y, 1.0 / ZOOM_FACTOR, s);
 	else if (2 == button && !(s->user.buttons & 128))
 	{
+		write(1, "PRB", 4);
 		printf("Zoom: %f ", s->params2D.zoom);
 		printf("at %f, %f\n", s->params2D.center.r, s->params2D.center.i);
 		pile3D(*s);
+		open_cloud(s->other3D);
 		return (0);
 	}
 	else if (2 == button)
 	{
 		((t_sack *)s->other)->params2D.center = pixel_to_quat(x, y, *s);
-		show_image(s->other);
+		switch_wins(s->other);
+/*		show_image(s->other);*/
 	}
 /*		show_julia(x, y, *s);*/
-	else
+	else if (y >= 0)
 		zoom_at(x, y, 1.0, s);
 	project2D(*s, 1);
 	return (0);
 }
 
-int mouse_release(int button, int x, int y, t_sack *s)
+void	switch_wins(t_sack *s)
 {
-	if (5 == button)
-		zoom_at(x, y, ZOOM_FACTOR, s);
-	else if (4 == button)
-		zoom_at(x, y, 1.0 / ZOOM_FACTOR, s);
-	else if (2 == button && !(s->user.buttons & 128))
-	{
-		printf("Zoom: %f ", s->params2D.zoom);
-		printf("at %f, %f\n", s->params2D.center.r, s->params2D.center.i);
-		pile3D(*s);
-		return (0);
-	}
-	else if (2 == button)
-		show_image(s->other);
-/*		show_julia(x, y, *s);*/
-	else
-		zoom_at(x, y, 1.0, s);
 	project2D(*s, 1);
-	return (0);
 }
 
 void	show_image(t_sack *s)
@@ -94,5 +82,5 @@ void	show_image(t_sack *s)
 /*	mlx_hook(s->mlx_win, 5, 1L<<3, mouse_release, s);*/
 /*	mlx_hook(s->mlx_win, 6, 1L<<6, mouse_move, s);*/
 	project2D(*s, 1);
-	mlx_loop(s->mlx);
+/*	mlx_loop(s->mlx);*/
 }
