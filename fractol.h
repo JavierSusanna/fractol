@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/10 15:20:48 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/16 01:57:22 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ double				norm2(t_quaternion z);
 void				iter(t_quaternion *zc);
 void				pixel_axis(t_2Dhypersection sect,
 						t_quaternion *x_axis, t_quaternion *y_axis);
+t_quaternion		pixel_to_quat(int x, int y, t_sack s);
 unsigned int		color(int scheme, t_quaternion point);
 int					project2D(t_sack s, int colors);
 void				pile3D(t_sack s);
@@ -98,7 +99,7 @@ int 				key_release(int keycode, t_sack *s);
 int 				mouse_press(int button, int x, int y, t_sack *s);
 int 				mouse_release(int button, int x, int y, t_sack *s);
 void				show_image(t_sack *s);
-void				show_julia(int x, int y, t_sack s);
+/*void				show_julia(int x, int y, t_sack s);*/
 double				ft_strtof(char *str);
 void				showhelp();
 t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom);

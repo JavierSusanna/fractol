@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/10 18:00:17 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/16 01:58:38 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,11 @@ int mouse_press(int button, int x, int y, t_sack *s)
 		return (0);
 	}
 	else if (2 == button)
-		show_julia(x, y, *s);
+	{
+		((t_sack *)s->other)->params2D.center = pixel_to_quat(x, y, *s);
+		show_image(s->other);
+	}
+/*		show_julia(x, y, *s);*/
 	else
 		zoom_at(x, y, 1.0, s);
 	project2D(*s, 1);
@@ -64,7 +68,8 @@ int mouse_release(int button, int x, int y, t_sack *s)
 		return (0);
 	}
 	else if (2 == button)
-		show_julia(x, y, *s);
+		show_image(s->other);
+/*		show_julia(x, y, *s);*/
 	else
 		zoom_at(x, y, 1.0, s);
 	project2D(*s, 1);
@@ -86,8 +91,8 @@ void	show_image(t_sack *s)
 	mlx_hook(s->mlx_win, 2, 1L<<0, key_press, s);
 	mlx_hook(s->mlx_win, 3, 1L<<1, key_release, s);
 	mlx_hook(s->mlx_win, 4, 1L<<2, mouse_press, s);
-	mlx_hook(s->mlx_win, 5, 1L<<3, mouse_release, s);
-	mlx_hook(s->mlx_win, 6, 1L<<6, mouse_move, s);
+/*	mlx_hook(s->mlx_win, 5, 1L<<3, mouse_release, s);*/
+/*	mlx_hook(s->mlx_win, 6, 1L<<6, mouse_move, s);*/
 	project2D(*s, 1);
 	mlx_loop(s->mlx);
 }

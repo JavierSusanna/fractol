@@ -6,7 +6,7 @@ INCLUDES = include
 
 DIR_FRACTOL = src/
 FILES_FRACTOL = \
-	fractol events2D manage2D quatmath
+	fractol events2D manage2D quatmath imagemath
 
 FILES_SRC += $(addprefix $(DIR_FRACTOL), $(FILES_FRACTOL))
 
