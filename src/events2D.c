@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/24 02:39:36 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/24 17:44:43 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ int key_press(int keycode, t_sack *s)
 		exit(EXIT_SUCCESS);
 	if (LEFT_CTRL == keycode)
 		s->user.buttons |= OTHER_IMG;
-	if (RIGHT_CAPS == keycode)
-		show_image(s->other);
 	return (0);
 }
 
@@ -44,7 +42,7 @@ int mouse_press(int button, int x, int y, t_sack *s)
 	else
 	{	
 		s->user.buttons |= 1<<(button - 1);
-		s->user.buttons |= 0xffffffff ^ DRAG_IMG;
+		s->user.buttons &= 0xffffffff ^ DRAG_IMG;
 	}
 	project2D(*s, 1);
 	return (0);
@@ -53,20 +51,21 @@ int mouse_press(int button, int x, int y, t_sack *s)
 int mouse_release(int button, int x, int y, t_sack *s)
 {
 	s->user.buttons &= 0xffffffff ^ (1<<(button - 1));
-	if (2 == button)
+	if (1 == button)
+	{
+		if (!(s->user.buttons & DRAG_IMG))
+		{
+			s->params2D.center = pixel_to_quat(x, y, *s);
+			project2D(*s, 1);
+		}
+		s->user.buttons &= 0xffffffff ^ DRAG_IMG;
+	}
+	else if (2 == button)
 	{
 		pile3D(*s);
 		((t_sack *)s->other3D)->params2D.zoom = s->params2D.zoom;
 		open_cloud(s->other3D);
-		return (0);
 	}
-	if (!(s->user.buttons & DRAG_IMG ))
-	{
-		s->params2D.center = pixel_to_quat(x, y, *s);
-		project2D(*s, 1);
-	}
-	s->user.buttons &= 0xffffffff ^ DRAG_IMG;
-	s->user.buttons &= 0xffffffff ^ 1;
 	return (0);
 }
 
@@ -81,20 +80,21 @@ int mouse_move(int x, int y, t_sack *s)
 	}
 	if (OTHER_IMG & s->user.buttons)
 	{
-		((t_sack *)s->other)->params2D.center.j = pixel_to_quat(x, y, *s).j;
-		((t_sack *)s->other)->params2D.center.k = pixel_to_quat(x, y, *s).k;
-/*		switch_wins(s->other);*/
-		show_image(s->other);
+		if ('M' == s->type)
+		{
+			((t_sack *)s->other)->params2D.center.j = pixel_to_quat(x, y, *s).j;
+			((t_sack *)s->other)->params2D.center.k = pixel_to_quat(x, y, *s).k;
+		}
+		else
+		{
+			((t_sack *)s->other)->params2D.center.r = pixel_to_quat(x, y, *s).r;
+			((t_sack *)s->other)->params2D.center.i = pixel_to_quat(x, y, *s).i;
+		}
+		project2D(*((t_sack *)s->other), 1);
 	}
 	s->user.x = x;
 	s->user.y = y;
 	return (0);
-}
-
-void	switch_wins(t_sack *s)
-{
-	project2D(*s, -1);
-	project2D(*s, 1);
 }
 
 void	show_image(t_sack *s)
@@ -115,5 +115,4 @@ void	show_image(t_sack *s)
 	mlx_hook(s->mlx_win, 5, 1L<<3, mouse_release, s);
 	mlx_hook(s->mlx_win, 6, 1L<<6, mouse_move, s);
 	project2D(*s, 1);
-/*	mlx_loop(s->mlx);*/
 }

@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/23 23:05:49 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/24 18:09:47 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,19 +35,23 @@ unsigned int	color(int scheme, t_quaternion point, t_sack s)
 	i = -1;
 	while (++i < MAX_ITER && norm2(zc) < 16.0)
 		iter(&zc);
-/*	if (0 == scheme)
-	{*/
 	if (MAX_ITER == i)
 		return (0x00000000);
 	else
 	{
 		i = i * 512 / MAX_ITER;
-		if (300 < i)
+		if (200 < i)
 		{
 			if (2 == scheme && (s.cloud)->points < 209000)
 			{
 				(s.cloud)->voxels[(s.cloud)->points] = point;
-				(s.cloud)->voxels[(s.cloud)->points].i = (s.cloud)->voxels[(s.cloud)->points].r;
+				if ('M' == s.type)
+					(s.cloud)->voxels[(s.cloud)->points].i = (s.cloud)->voxels[(s.cloud)->points].i;
+				else
+				{
+					(s.cloud)->voxels[(s.cloud)->points].j = (s.cloud)->voxels[(s.cloud)->points].r;
+					(s.cloud)->voxels[(s.cloud)->points].k = (s.cloud)->voxels[(s.cloud)->points].k * 5 + 3.5;
+				}
 				(s.cloud)->points++;
 			}
 			return (0x00ffff00);
@@ -79,43 +83,28 @@ int	project2D(t_sack s, int colors)
 {
 	int				x;
 	int				y;
-	t_quaternion	x_axis;
-	t_quaternion	y_axis;
-	t_quaternion	x0;
-	
-	/*falta verificar que x_vect e y_vect son perpendiculares y unitarios*/
-	pixel_axis(s.params2D, &x_axis, &y_axis);
+
 	y = -1;
 	while (++y < WIN_HEIGHT)
 	{
-		x0 = q_add(s.params2D.center, q_by_scalar(x_axis, -1 - WIN_WIDTH / 2));
-		x0 = q_add(x0, q_by_scalar(y_axis, y - WIN_HEIGHT / 2));
 		x = -1;
 		while (++x < WIN_WIDTH)
-			*(s.params2D.addr++) = color(colors, q_add(x0, q_by_scalar(x_axis, x)), s);
+			*(s.params2D.addr++) = color(colors, pixel_to_quat(x, y, s), s);
 	}
-/*	s->params2D.addr = (unsigned int *)s->img.addr;*/
 	mlx_put_image_to_window(s.mlx, s.mlx_win, s.img.img, 0, 0);
 	mlx_do_sync(s.mlx);
-/*	point.j = s->params2D.center.k / 30;
-	point.k = - s->params2D.center.j / 30;
-	s->params2D.center.j += point.j;
-	s->params2D.center.k += point.k;
-	s->params2D.center.j /= 1.0005554;
-	s->params2D.center.k /= 1.0005554;*/
 	return (0);
 }
 
 void	pile3D(t_sack s)
 {
-	int				z;
+	int		z;
 
-	s.params2D.z_vector.r = -10.0 * s.params2D.x_vector.j;
-	s.params2D.z_vector.i = 0;
+	s.params2D.z_vector.r = 0;
+	s.params2D.z_vector.i = -10.0 * s.params2D.x_vector.j;
 	s.params2D.z_vector.j = 0;
 	s.params2D.z_vector.k = -2 * s.params2D.x_vector.r;
 
-	write(1, "pile3D", 7);
 	project2D(s, -1);
 	s.params2D.z_vector = q_by_scalar(s.params2D.z_vector, 4.0 / (WIN_WIDTH * s.params2D.zoom));
 	s.params2D.center = q_add(s.params2D.center, q_by_scalar(s.params2D.z_vector, -15));
@@ -123,11 +112,8 @@ void	pile3D(t_sack s)
 	s.cloud->points = 0;
 	while (z < WIN_HEIGHT / 10)
 	{
-		printf("z.k = %f", s.params2D.center.k);
-		printf("\r");
 		project2D(s, 2);
 		z++;
-		printf("puntos tras %d capas: %d\n", z, s.cloud->points);
 		s.params2D.center = q_add(s.params2D.center, s.params2D.z_vector);
 	}
 }

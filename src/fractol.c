@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/23 17:53:04 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/24 17:45:29 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ double	ft_strtof(char *str)
 	return (sign * ret);
 }
 
-void	showhelp()
+void	showhelp(void)
 {
 	printf("Aquí ayuda\n");
 }
@@ -48,9 +48,10 @@ t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom)
 	t_2Dhypersection	ret;
 
 	ret.addr = addr;
-	ret.center = q_by_scalar(ret.center, 0);
-	ret.x_vector = q_by_scalar(ret.x_vector, 0);
-	ret.y_vector = q_by_scalar(ret.y_vector, 0);
+	ret.center = q_zero();
+	ret.x_vector = q_zero();
+	ret.y_vector = q_zero();
+	ret.z_vector = q_zero();
 	ret.zoom = zoom;
 	return (ret);
 }
@@ -65,7 +66,6 @@ void	initialise_s(t_sack *s, char *win_name)
 		dup = 2;
 	s->img.width = dup * WIN_WIDTH;
 	s->img.height = dup * WIN_HEIGHT;
-	printf("win: [%c], wdth: [%i], hght: [%i]\n", s->type, s->img.width, s->img.height);
 	s->mlx_win = mlx_new_window(s->mlx, s->img.width, s->img.height, win_name);
 	s->img.img = mlx_new_image(s->mlx, s->img.width, s->img.height);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel, 
@@ -103,7 +103,7 @@ int	main(int nargs, char **args)
 		initialise_s(&sm, "Mandelbrot");
 		printf("(s3D) bpp: %d\nline_length: %d\nendian: %d\n", 
 				s3D.img.bits_per_pixel, s3D.img.line_length, s3D.img.endian);
-		zc = q_by_scalar(sm.params2D.x_vector, 0);
+		zc = q_zero();
 		if (nargs > 3)
 		{
 			zc.j = ft_strtof(args[2]);

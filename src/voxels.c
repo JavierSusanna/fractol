@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 08:41:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/24 01:26:57 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/24 12:40:25 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ int	vmouse_move(int x, int y, t_sack *s)
 	double			y1;
 	double			h1;
 	double			costh;
-	double			sinth;
 
 	if (!(s->user.buttons))
 		return (0);
@@ -96,11 +95,10 @@ int	vmouse_move(int x, int y, t_sack *s)
 	if (!h1)
 		h1 = 1;
 	costh = 1 - h1 / 10000;
-	sinth = sqrt(1 - costh * costh);
 	rotation.r = costh;
-	rotation.i = -sinth * y1 / h1;
+	rotation.i = -sqrt(1 - costh * costh) * y1 / h1;
 	rotation.j = 0;
-	rotation.k = sinth * x1 / h1;
+	rotation.k = sqrt(1 - costh * costh) * x1 / h1;
 	plot(*s, 0);
 	rotate(s, rotation);
 	plot(*s, 1);
@@ -114,6 +112,4 @@ void	open_cloud(t_sack *s)
 	mlx_hook(s->mlx_win, 5, 1L<<3, vmouse_release, s);
 	mlx_hook(s->mlx_win, 6, 1L<<6, vmouse_move, s);
 	plot(*s, 1);
-/*	project2D(s, 1);*/
-	mlx_loop(s->mlx);
 }

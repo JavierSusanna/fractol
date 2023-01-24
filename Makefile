@@ -1,7 +1,7 @@
 ### FILES AND DIRECTORIES ###
 NAME = fractol
 GC = gcc
-CFLAGS = -Wall -Werror -Wextra -std=c89 -g
+CFLAGS = -Wall -Werror -Wextra -std=c89 -g # -fsanitize=address
 INCLUDES = include
 
 DIR_FRACTOL = src/
@@ -21,7 +21,7 @@ FILES_OBJ = $(addprefix $(DIR_OBJ), $(addsuffix .o, $(FILES_FRACTOL)))
 all: $(NAME)
 
 $(NAME): $(FILES_OBJ)
-	$(GC) $(FILES_OBJ) -Lmlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
+	$(GC) $(FILES_OBJ) -Lmlx -lmlx -framework OpenGL -framework AppKit -o $(NAME) # -fsanitize=address
 #	@ar rsc $(NAME) $(FILES_OBJ)
 	@echo "SUCCESSFULLY COMPILED $(NAME)"
 

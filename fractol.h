@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/24 02:29:17 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/24 15:47:06 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 # define ESC 53
 # define LEFT_CTRL 256
 # define RIGHT_CAPS 258
-# define OTHER_IMG 64
-# define DRAG_IMG 512
+# define OTHER_IMG	0b0000000001000000
+# define DRAG_IMG	0b0000001000000000
 # define MAX_ITER 250
 # define WIN_WIDTH 800
 # define WIN_HEIGHT 480
@@ -97,6 +97,7 @@ typedef struct	s_
 
 t_quaternion		q_add(t_quaternion q1, t_quaternion q2);
 t_quaternion		q_by_scalar(t_quaternion q1, double s);
+t_quaternion		q_zero(void);
 double				norm2(t_quaternion z);
 void				iter(t_quaternion *zc);
 void				pixel_axis(t_2Dhypersection sect,
