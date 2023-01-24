@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/16 20:53:23 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/23 17:53:04 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,21 @@ t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom)
 
 void	initialise_s(t_sack *s, char *win_name)
 {
+	int	dup;
+
+	dup = 1;
 	s->type = win_name[0];
-	s->mlx_win = mlx_new_window(s->mlx, WIN_WIDTH, WIN_HEIGHT, win_name);
-	s->img.img = mlx_new_image(s->mlx, WIN_WIDTH, WIN_HEIGHT);
+	if ('3' == s->type)
+		dup = 2;
+	s->img.width = dup * WIN_WIDTH;
+	s->img.height = dup * WIN_HEIGHT;
+	printf("win: [%c], wdth: [%i], hght: [%i]\n", s->type, s->img.width, s->img.height);
+	s->mlx_win = mlx_new_window(s->mlx, s->img.width, s->img.height, win_name);
+	s->img.img = mlx_new_image(s->mlx, s->img.width, s->img.height);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel, 
 			&s->img.line_length, &s->img.endian);
 	(s->cloud)->points = 0;
+	s->user.buttons = 0;
 	if ('3' == s->type)
 		s->num = 1;
 	else
@@ -89,11 +98,11 @@ int	main(int nargs, char **args)
 		sm.other3D = (void*)&s3D;
 		sm.other = (void*)&sj;
 		sj.other = (void*)&sm;
-		initialise_s(&sm, "Mandelbrot");
-		initialise_s(&sj, "Julia");
 		initialise_s(&s3D, "3D");
-/*		printf("bpp: %d\nline_length: %d\nendian: %d\n", s.img.bits_per_pixel, 
-				s.img.line_length, s.img.endian);*/
+		initialise_s(&sj, "Julia");
+		initialise_s(&sm, "Mandelbrot");
+		printf("(s3D) bpp: %d\nline_length: %d\nendian: %d\n", 
+				s3D.img.bits_per_pixel, s3D.img.line_length, s3D.img.endian);
 		zc = q_by_scalar(sm.params2D.x_vector, 0);
 		if (nargs > 3)
 		{

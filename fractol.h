@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/16 20:52:16 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/24 02:29:17 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,14 @@
 # include <mlx.h>
 
 
+# define ESC 53
+# define LEFT_CTRL 256
+# define RIGHT_CAPS 258
+# define OTHER_IMG 64
+# define DRAG_IMG 512
+# define MAX_ITER 250
 # define WIN_WIDTH 800
 # define WIN_HEIGHT 480
-# define MAX_ITER 50
 # define ZOOM_FACTOR 2
 
 
@@ -34,6 +39,8 @@ typedef struct	s_data
 	int		bits_per_pixel;
 	int		line_length;
 	int		endian;
+	int		width;
+	int		height;
 }				t_data;
 
 typedef struct	s_quaternion
@@ -50,6 +57,7 @@ typedef struct	s_2Dhypersection
 	t_quaternion	center;
 	t_quaternion	x_vector;
 	t_quaternion	y_vector;
+	t_quaternion	z_vector;
 	double			zoom;
 
 }				t_2Dhypersection;
@@ -64,8 +72,9 @@ typedef struct	s_user_state
 typedef struct	s_cloud
 {
 	int				points;
-	t_quaternion	voxels[109460];
-	unsigned int	color[109460];
+	t_quaternion	rot;
+	t_quaternion	voxels[209460];
+	unsigned int	color[209460];
 }				t_cloud;
 
 typedef struct	s_sack
@@ -93,7 +102,8 @@ void				iter(t_quaternion *zc);
 void				pixel_axis(t_2Dhypersection sect,
 						t_quaternion *x_axis, t_quaternion *y_axis);
 t_quaternion		pixel_to_quat(int x, int y, t_sack s);
-unsigned int		color(int scheme, t_quaternion point, t_cloud *cloud);
+void				clear_img(t_data img);
+unsigned int		color(int scheme, t_quaternion point, t_sack s);
 int					project2D(t_sack s, int colors);
 void				pile3D(t_sack s);
 void				switch_wins(t_sack *s);
@@ -102,6 +112,7 @@ int 				key_press(int keycode, t_sack *s);
 int 				key_release(int keycode, t_sack *s);
 int 				mouse_press(int button, int x, int y, t_sack *s);
 int 				mouse_release(int button, int x, int y, t_sack *s);
+int 				mouse_move(int x, int y, t_sack *s);
 void				show_image(t_sack *s);
 /*void				set_axis(t_sack *s);*/
 /*void				show_julia(int x, int y, t_sack s);*/
