@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/26 23:54:32 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/27 12:12:03 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,14 @@
 
 int key_press(int keycode, t_sack *s)
 {
+	/*123=izq;124=dcha;125=abajo;126=arriba*/
 	printf("Código de tecla: %d\n", keycode);
+	if (126 == keycode)
+		s->params2D.max_i *= 1.1;
+	if (125 == keycode)
+		s->params2D.max_i /= 1.1;
+	printf("zoom: [%f]\nmax_i: [%f]\n\n", s->params2D.zoom, s->params2D.max_i * log1p(s->params2D.zoom) / 4);
+	project2D(*s, 1);
 	if (ESC == keycode)
 		exit(EXIT_SUCCESS);
 	if (LEFT_CTRL == keycode)

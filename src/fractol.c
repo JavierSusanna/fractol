@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/26 23:36:23 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/27 10:58:31 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom)
 	ret.x_vector = q_zero();
 	ret.y_vector = q_zero();
 	ret.z_vector = q_zero();
+	ret.max_i = MAX_ITER;
 	ret.zoom = zoom;
 	return (ret);
 }

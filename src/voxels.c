@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 08:41:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/27 01:19:28 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/27 13:03:41 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@ void	plot(t_sack s, int paint)
 	while (++n < s.cloud->points)
 	{
 		tmp = rotate(s.cloud->voxels[n], s.cloud->rot);
-		x = tmp.i * s.img.height + s.img.width;
-		y = (tmp.k + 1) * s.img.height;
-		x /= 4 / s.params2D.zoom;
-		y /= 4 / s.params2D.zoom;
+		x = tmp.i * s.img.height + 1.5 * s.img.width;
+		y = tmp.k * s.img.height + 1.5 * s.img.height;
+		x /= 3 / s.params2D.zoom;
+		y /= 3 / s.params2D.zoom;
 		if (x >= 0 && x < s.img.width && y >= 0 && y < s.img.height)
 			*(addr + y * s.img.width + x) = 0x00ffffffU * paint;
 	}

@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/24 18:09:47 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/27 13:09:52 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,30 +27,32 @@ unsigned int	color(int scheme, t_quaternion point, t_sack s)
 {
 	unsigned int	i;
 	t_quaternion	zc;
+	double			max_i;
 
 	if (-1 == scheme)
 		return (0);
+	max_i = s.params2D.max_i * log1p(s.params2D.zoom) / 4;
 	point = q_add(point, q_by_scalar(s.params2D.z_vector, (double)rand()/RAND_MAX-0.5));
 	zc = point;
 	i = -1;
-	while (++i < MAX_ITER && norm2(zc) < 16.0)
+	while (++i < max_i && norm2(zc) < 16.0)
 		iter(&zc);
-	if (MAX_ITER == i)
+	if (i >= max_i)
 		return (0x00000000);
 	else
 	{
-		i = i * 512 / MAX_ITER;
-		if (200 < i)
+		i = i * 512 / max_i;
+		if (400 < i)
 		{
 			if (2 == scheme && (s.cloud)->points < 209000)
 			{
 				(s.cloud)->voxels[(s.cloud)->points] = point;
 				if ('M' == s.type)
-					(s.cloud)->voxels[(s.cloud)->points].i = (s.cloud)->voxels[(s.cloud)->points].i;
+					s.cloud->voxels[s.cloud->points].i = s.cloud->voxels[s.cloud->points].i;
 				else
 				{
-					(s.cloud)->voxels[(s.cloud)->points].j = (s.cloud)->voxels[(s.cloud)->points].r;
-					(s.cloud)->voxels[(s.cloud)->points].k = (s.cloud)->voxels[(s.cloud)->points].k * 5 + 3.5;
+					s.cloud->voxels[s.cloud->points].j = s.cloud->voxels[s.cloud->points].r;
+					s.cloud->voxels[s.cloud->points].k = (s.cloud->voxels[s.cloud->points].k - s.cloud->center.k) * 1;
 				}
 				(s.cloud)->points++;
 			}
@@ -106,6 +108,7 @@ void	pile3D(t_sack s)
 	s.params2D.z_vector.k = -2 * s.params2D.x_vector.r;
 
 	project2D(s, -1);
+	s.cloud->center = s.params2D.center;
 	s.params2D.z_vector = q_by_scalar(s.params2D.z_vector, 4.0 / (WIN_WIDTH * s.params2D.zoom));
 	s.params2D.center = q_add(s.params2D.center, q_by_scalar(s.params2D.z_vector, -15));
 	z = 0;

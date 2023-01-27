@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/27 01:06:06 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/27 12:48:57 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ typedef struct	s_2Dhypersection
 	t_quaternion	x_vector;
 	t_quaternion	y_vector;
 	t_quaternion	z_vector;
+	int				max_i;
 	double			zoom;
 
 }				t_2Dhypersection;
@@ -73,6 +74,7 @@ typedef struct	s_cloud
 {
 	int				points;
 	t_quaternion	rot;
+	t_quaternion	center;
 	t_quaternion	voxels[209460];
 	unsigned int	color[209460];
 }				t_cloud;
