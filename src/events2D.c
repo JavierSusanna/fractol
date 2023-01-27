@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/24 17:44:43 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/26 23:54:32 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ int mouse_release(int button, int x, int y, t_sack *s)
 	{
 		pile3D(*s);
 		((t_sack *)s->other3D)->params2D.zoom = s->params2D.zoom;
+		s->cloud->rot = q_zero();
+		s->cloud->rot.r = 1;
 		open_cloud(s->other3D);
 	}
 	return (0);

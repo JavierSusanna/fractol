@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/24 15:47:06 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/27 01:06:06 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,8 +96,11 @@ typedef struct	s_
 }				t_;
 
 t_quaternion		q_add(t_quaternion q1, t_quaternion q2);
+t_quaternion		q_by(t_quaternion q1, t_quaternion q2);
+t_quaternion		q_star(t_quaternion q);
 t_quaternion		q_by_scalar(t_quaternion q1, double s);
 t_quaternion		q_zero(void);
+void				q_unit(t_quaternion *q);
 double				norm2(t_quaternion z);
 void				iter(t_quaternion *zc);
 void				pixel_axis(t_2Dhypersection sect,
@@ -122,7 +125,7 @@ void				showhelp();
 t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom);
 void				initialise_s(t_sack *s, char *win_name);
 void				plot(t_sack s, int paint);
-void				rotate(t_sack *s, t_quaternion rot);
+t_quaternion		rotate(t_quaternion p, t_quaternion rot);
 int					vmouse_press(int button, int x, int y, t_sack *s);
 int					vmouse_release(int button, int x, int y, t_sack *s);
 int					vmouse_move(int x, int y, t_sack *s);

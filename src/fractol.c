@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/24 17:45:29 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/01/26 23:36:23 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,9 @@ void	initialise_s(t_sack *s, char *win_name)
 	s->img.img = mlx_new_image(s->mlx, s->img.width, s->img.height);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel, 
 			&s->img.line_length, &s->img.endian);
-	(s->cloud)->points = 0;
+	s->cloud->points = 0;
+	s->cloud->rot = q_zero();
+	s->cloud->rot.r = 1;
 	s->user.buttons = 0;
 	if ('3' == s->type)
 		s->num = 1;
