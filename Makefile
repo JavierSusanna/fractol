@@ -1,12 +1,12 @@
 ### FILES AND DIRECTORIES ###
 NAME = fractol
 GC = gcc
-CFLAGS = -Wall -Werror -Wextra -std=c89 -g # -fsanitize=address
+CFLAGS = -Wall -Werror -Wextra -std=c89 -g -Imlx # -fsanitize=address
 INCLUDES = include
 
 DIR_FRACTOL = src/
 FILES_FRACTOL = \
-	fractol events2D manage2D quatmath imagemath voxels
+	fractol init events2D manage2D quatmath imagemath voxels
 
 FILES_SRC += $(addprefix $(DIR_FRACTOL), $(FILES_FRACTOL))
 
@@ -21,7 +21,7 @@ FILES_OBJ = $(addprefix $(DIR_OBJ), $(addsuffix .o, $(FILES_FRACTOL)))
 all: $(NAME)
 
 $(NAME): $(FILES_OBJ)
-	$(GC) $(FILES_OBJ) -Lmlx -lmlx -framework OpenGL -framework AppKit -o $(NAME) # -fsanitize=address
+	$(GC) $(FILES_OBJ) -lmlx -framework OpenGL -framework AppKit -o $(NAME) # -fsanitize=address
 #	@ar rsc $(NAME) $(FILES_OBJ)
 	@echo "SUCCESSFULLY COMPILED $(NAME)"
 
@@ -47,14 +47,14 @@ bonus: all
 ###################
 
 clean:
-	@make clean -C mlx
+#	@make clean -C mlx
 	@rm -rf $(DIR_OBJ)
 	@echo "-FRACTOL- OBJECTS DELETED. CLEAN SUCCESSFUL!"
 
 fclean: clean
-	@rm -rf mlx/libmlx.a
+#	@rm -rf mlx/libmlx.a
 	@rm -rf $(NAME)
-	@echo "-MLX- LIBRARY DELETED. CLEAN SUCCESSFUL!"
+#	@echo "-MLX- LIBRARY DELETED. CLEAN SUCCESSFUL!"
 	@echo "-FRACTOL- LIBRARY DELETED. CLEAN SUCCESSFUL!"
 
 re:	fclean all

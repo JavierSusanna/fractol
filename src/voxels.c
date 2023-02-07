@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 08:41:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/27 13:03:41 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/07 00:35:06 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ void	plot(t_sack s, int paint)
 		tmp = rotate(s.cloud->voxels[n], s.cloud->rot);
 		x = tmp.i * s.img.height + 1.5 * s.img.width;
 		y = tmp.k * s.img.height + 1.5 * s.img.height;
-		x /= 3 / s.params2D.zoom;
-		y /= 3 / s.params2D.zoom;
+		x /= 3;/* / s.params2d.zoom;*/
+		y /= 3;/* / s.params2d.zoom;*/
 		if (x >= 0 && x < s.img.width && y >= 0 && y < s.img.height)
 			*(addr + y * s.img.width + x) = 0x00ffffffU * paint;
 	}
@@ -80,6 +80,13 @@ int vmouse_press(int button, int x, int y, t_sack *s)
 	return (0);
 }
 
+int vkey_press(int keycode, t_sack *s)
+{
+	if (ESC == keycode)
+		exit(EXIT_SUCCESS);
+	return (s->type);
+}
+
 int vmouse_release(int button, int x, int y, t_sack *s)
 {
 	s->user.buttons &= 255 ^ (1U<<button);
@@ -118,6 +125,7 @@ int	vmouse_move(int x, int y, t_sack *s)
 void	open_cloud(t_sack *s)
 {
 	clear_img(s->img);
+	mlx_hook(s->mlx_win, 2, 1L<<0, vkey_press, s);
 	mlx_hook(s->mlx_win, 4, 1L<<2, vmouse_press, s);
 	mlx_hook(s->mlx_win, 5, 1L<<3, vmouse_release, s);
 	mlx_hook(s->mlx_win, 6, 1L<<6, vmouse_move, s);

@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/27 10:58:31 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/07 01:46:48 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,82 +40,37 @@ double	ft_strtof(char *str)
 
 void	showhelp(void)
 {
-	printf("Aquí ayuda\n");
-}
-
-t_2Dhypersection	initialise_2D(unsigned int *addr, double zoom)
-{
-	t_2Dhypersection	ret;
-
-	ret.addr = addr;
-	ret.center = q_zero();
-	ret.x_vector = q_zero();
-	ret.y_vector = q_zero();
-	ret.z_vector = q_zero();
-	ret.max_i = MAX_ITER;
-	ret.zoom = zoom;
-	return (ret);
-}
-
-void	initialise_s(t_sack *s, char *win_name)
-{
-	int	dup;
-
-	dup = 1;
-	s->type = win_name[0];
-	if ('3' == s->type)
-		dup = 2;
-	s->img.width = dup * WIN_WIDTH;
-	s->img.height = dup * WIN_HEIGHT;
-	s->mlx_win = mlx_new_window(s->mlx, s->img.width, s->img.height, win_name);
-	s->img.img = mlx_new_image(s->mlx, s->img.width, s->img.height);
-	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel, 
-			&s->img.line_length, &s->img.endian);
-	s->cloud->points = 0;
-	s->cloud->rot = q_zero();
-	s->cloud->rot.r = 1;
-	s->user.buttons = 0;
-	if ('3' == s->type)
-		s->num = 1;
-	else
-		s->params2D = initialise_2D((unsigned int*)s->img.addr, 1.0);
+	printf("\n***********HELP************\n");
+	printf("./fractal m shows Mandelbrot Set\n");
+	printf("./fractal j 0.0 0.7 shows Julia Set\n");
+	printf("Mouse wheel to zoom in or out.\n");
+	printf("Arrows or click and drag mouse to move fractal.\n");
+	printf("Left ctrl key and move mouse over a set to change the other set's parameter.\n");
+	printf("Right click for 3D.\n");
+	printf("*****************************\n");
 }
 
 int	main(int nargs, char **args)
 {
-	t_sack			sm;
-	t_sack			sj;
-	t_sack			s3D;
-	t_quaternion	zc;
-	t_cloud			cloud;
+	char	type;
+	double	re;
+	double	im;
 
 	if (nargs > 1)
 	{
-		sm.mlx = mlx_init();
-		sj.mlx = sm.mlx;
-		s3D.mlx = sm.mlx;
-		sm.cloud = &cloud;
-		sj.cloud = &cloud;
-		s3D.cloud = &cloud;
-		sj.other3D = (void*)&s3D;
-		sm.other3D = (void*)&s3D;
-		sm.other = (void*)&sj;
-		sj.other = (void*)&sm;
-		initialise_s(&s3D, "3D");
-		initialise_s(&sj, "Julia");
-		initialise_s(&sm, "Mandelbrot");
-		printf("(s3D) bpp: %d\nline_length: %d\nendian: %d\n", 
-				s3D.img.bits_per_pixel, s3D.img.line_length, s3D.img.endian);
-		zc = q_zero();
-		if (nargs > 3)
+		type = args[1][0];
+		if ('m' == type || 'j' == type)
 		{
-			zc.j = ft_strtof(args[2]);
-			zc.k = ft_strtof(args[3]);
+			re = 0;
+			im = 0;
+			if (nargs > 3)
+			{
+				re = ft_strtof(args[2]);
+				im = ft_strtof(args[3]);
+			}
+			if (re * re < 100 && im * im < 100)
+				open_all(type, re, im);
 		}
-		sj.params2D.center = zc;
-		show_image(&sm);
-		show_image(&sj);
-		mlx_loop(sm.mlx);
 	}
 	showhelp();
 	return (-1);
