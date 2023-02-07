@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/07 02:02:45 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/07 10:46:27 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,19 +48,18 @@ t_2dhypersection	initialise_2d(unsigned int *addr, double zoom)
 
 void	initialise_s(t_sack *s, char *win_name)
 {
-	int	dup;
+	int	mult;
 
-	dup = 1;
+	mult = 1;
 	s->type = win_name[0];
 	if ('3' == s->type)
-		dup = 4;
+		mult = 1200 / WIN_HEIGHT;
 	if ('M' == s->type)
-	{
-		((t_sack *)(s->other))->cloud = s->cloud;
 		((t_sack *)(s->other3d))->cloud = s->cloud;
-	}
-	s->img.width = dup * WIN_WIDTH;
-	s->img.height = dup * WIN_HEIGHT;
+	if ('J' == s->type)
+		s->cloud = ((t_sack *)(s->other))->cloud;
+	s->img.width = mult * WIN_WIDTH;
+	s->img.height = mult * WIN_HEIGHT;
 	s->mlx_win = mlx_new_window(s->mlx, s->img.width, s->img.height, win_name);
 	s->img.img = mlx_new_image(s->mlx, s->img.width, s->img.height);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel, 

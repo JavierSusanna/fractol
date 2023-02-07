@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/06 21:03:05 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/07 11:14:46 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ t_quaternion	pixel_to_quat(int x, int y, t_sack s)
 	t_quaternion	ret;
 
 	pixel_axis(s.params2d, &x_axis, &y_axis);
-	ret = q_add(s.params2d.center, q_by_scalar(x_axis, -1 - WIN_WIDTH / 2));
+	ret = q_add(s.params2d.center, q_by_scalar(x_axis, x - WIN_WIDTH / 2));
 	ret = q_add(ret, q_by_scalar(y_axis, y - WIN_HEIGHT / 2));
-	ret = q_add(ret, q_by_scalar(x_axis, x));
+	/*ret = q_add(ret, q_by_scalar(x_axis, x));*/
 	return (ret);
 }
 
