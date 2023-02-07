@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/07 00:47:52 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/07 15:16:30 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	px_to_cloud(int x, int y, t_sack s)
 {
 	t_quaternion	point;
 
-	if ((s.cloud)->points > 209000)
+	if ((s.cloud)->points > MAX_POINTS)
 		return ;
 	point = pixel_to_quat(x, y, s);
 	s.cloud->voxels[s.cloud->points] = point;
@@ -163,14 +163,14 @@ void	pile3d(t_sack s)
 	s.params2d.center = q_add(s.params2d.center, q_by_scalar(s.params2d.z_vector, -0));
 	z = 0;
 	s.cloud->points = 0;
-	while (s.cloud->points < 209000 && z < 200)
+	while (s.cloud->points < MAX_POINTS && z < 200)
 	{
 		project2d(s, 2);
 		printf("%d, puntos: [%d]\n", z, s.cloud->points);
 		z++;
 		s.params2d.center = q_add(s.params2d.center, s.params2d.z_vector);
 		if (100 == z)
-			s.params2d.center = q_add(s.params2d.center, q_by_scalar(s.params2d.z_vector, -80.618));
+			s.params2d.center = q_add(s.params2d.center, q_by_scalar(s.params2d.z_vector, -100.618));
 
 	}
 	center_cloud(s);
@@ -181,7 +181,7 @@ void	zoom_at(int x, int y, double zf, t_sack *s)
 	t_quaternion	x_axis;
 	t_quaternion	y_axis;
 
-	project2d(*s, -1);
+	/*project2d(*s, -1);*/
 	pixel_axis(s->params2d, &x_axis, &y_axis);
 	s->params2d.center = q_add(s->params2d.center,
 			q_by_scalar(x_axis, (x - WIN_WIDTH / 2)));

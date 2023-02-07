@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/07 00:56:56 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/07 14:59:25 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 # define MAX_ITER 20
 # define WIN_WIDTH 400
 # define WIN_HEIGHT 240
+# define MAX_POINTS 230987
 # define ZOOM_FACTOR 2
 
 
@@ -81,8 +82,7 @@ typedef struct	s_cloud
 	int				points;
 	t_quaternion	rot;
 	t_quaternion	center;
-	t_quaternion	voxels[209460];
-	unsigned int	color[209460];
+	t_quaternion	voxels[232000];
 }				t_cloud;
 
 typedef struct	s_sack
@@ -94,14 +94,9 @@ typedef struct	s_sack
 	t_2dhypersection	params2d;
 	t_user_state		user;
 	t_cloud				*cloud;
-	double				num;
 	void				*other;
 	void				*other3d;
 }				t_sack;
-
-typedef struct	s_
-{
-}				t_;
 
 t_quaternion		q_add(t_quaternion q1, t_quaternion q2);
 t_quaternion		q_by(t_quaternion q1, t_quaternion q2);
@@ -114,6 +109,8 @@ void				iter(t_quaternion *zc);
 void				pixel_axis(t_2dhypersection sect,
 						t_quaternion *x_axis, t_quaternion *y_axis);
 t_quaternion		pixel_to_quat(int x, int y, t_sack s);
+void				chg_iter(t_sack *s, int key);
+void				chg_view(t_sack *s, int key);
 void				px_to_cloud(int	x, int y, t_sack s);
 void				find_border(int x, int y, t_sack s);
 void				clear_img(t_data img);
@@ -129,15 +126,13 @@ int 				mouse_press(int button, int x, int y, t_sack *s);
 int 				mouse_release(int button, int x, int y, t_sack *s);
 int 				mouse_move(int x, int y, t_sack *s);
 void				show_image(t_sack *s);
-/*void				set_axis(t_sack *s);*/
-/*void				show_julia(int x, int y, t_sack s);*/
 double				ft_strtof(char *str);
 void				showhelp();
 t_2dhypersection	initialise_2D(unsigned int *addr, double zoom);
 void				initialise_s(t_sack *s, char *win_name);
 void				plot(t_sack s, int paint);
 t_quaternion		rotate(t_quaternion p, t_quaternion rot);
-int 				key_press(int keycode, t_sack *s);
+int 				vkey_press(int keycode, t_sack *s);
 int					vmouse_press(int button, int x, int y, t_sack *s);
 int					vmouse_release(int button, int x, int y, t_sack *s);
 int					vmouse_move(int x, int y, t_sack *s);

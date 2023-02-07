@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/07 01:46:48 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/07 13:36:21 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ void	showhelp(void)
 	printf("./fractal j 0.0 0.7 shows Julia Set\n");
 	printf("Mouse wheel to zoom in or out.\n");
 	printf("Arrows or click and drag mouse to move fractal.\n");
-	printf("Left ctrl key and move mouse over a set to change the other set's parameter.\n");
+	printf("Left ctrl key and move mouse over a set ");
+	printf("to change the other set's parameter.\n");
 	printf("Right click for 3D.\n");
 	printf("*****************************\n");
 }

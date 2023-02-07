@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/07 11:14:56 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/07 15:25:26 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,46 +14,18 @@
 
 int key_press(int keycode, t_sack *s)
 {
-	/*123=izq;124=dcha;125=abajo;126=arriba*/
 	printf("Código de tecla: %d\n", keycode);
-	if (LEFT_CAPS == keycode)
-		s->user.buttons |= PR_LCAPS;
-	if (KEY_UP == keycode)
-	{
-		if (s->user.buttons & PR_LCAPS)
-			s->params2d.max_i *= 1.1;
-		else if ('M' == s->type)
-			s->params2d.center.k -= 0.2/s->params2d.zoom;
-		else
-			s->params2d.center.i -= 0.2/s->params2d.zoom;
-	}
-	if (KEY_DOWN == keycode)
-	{
-		if (s->user.buttons & PR_LCAPS)
-			s->params2d.max_i /= 1.1;
-		else if ('M' == s->type)
-			s->params2d.center.k += 0.2/s->params2d.zoom;
-		else
-			s->params2d.center.i += 0.2/s->params2d.zoom;
-	}
-	if (KEY_LEFT == keycode)
-	{
-		if ('M' == s->type)
-			s->params2d.center.j -= 0.2/s->params2d.zoom;
-		else
-			s->params2d.center.r -= 0.2/s->params2d.zoom;
-	}
-	if (KEY_RIGHT == keycode)
-	{
-		if ('M' == s->type)
-			s->params2d.center.j += 0.2/s->params2d.zoom;
-		else
-			s->params2d.center.r += 0.2/s->params2d.zoom;
-	}
+	if (s->user.buttons & PR_LCAPS)
+		chg_iter(s, keycode);
+	else if (KEY_UP == keycode || KEY_DOWN == keycode || 
+			KEY_RIGHT == keycode || KEY_LEFT == keycode)
+		chg_view(s, keycode);
 	printf("zoom: [%f]\nmax_i: [%f]\n\n", s->params2d.zoom, s->params2d.max_i * log1p(s->params2d.zoom) / 4);
 	project2d(*s, 1);
 	if (ESC == keycode)
 		exit(EXIT_SUCCESS);
+	if (LEFT_CAPS == keycode)
+		s->user.buttons |= PR_LCAPS;
 	if (LEFT_CTRL == keycode)
 		s->user.buttons |= OTHER_IMG;
 	return (0);
@@ -102,6 +74,7 @@ int mouse_release(int button, int x, int y, t_sack *s)
 	else if (2 == button)
 	{
 		pile3d(*s);
+		project2d(*s, 1);
 		((t_sack *)s->other3d)->params2d.zoom = s->params2d.zoom;
 		s->cloud->rot = q_zero();
 		s->cloud->rot.r = 1;
