@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/07 13:56:22 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/11 17:05:33 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ void	show_image(t_sack *s)
 		s->params2d.x_vector.j = 1.0;
 		s->params2d.y_vector.k = 1.0;
 	}
-	mlx_hook(s->mlx_win, 2, 1L<<0, key_press, s);
-	mlx_hook(s->mlx_win, 3, 1L<<1, key_release, s);
-	mlx_hook(s->mlx_win, 4, 1L<<2, mouse_press, s);
-	mlx_hook(s->mlx_win, 5, 1L<<3, mouse_release, s);
-	mlx_hook(s->mlx_win, 6, 1L<<6, mouse_move, s);
+	mlx_hook(s->mlx_win, 2, 1L << 0, key_press, s);
+	mlx_hook(s->mlx_win, 3, 1L << 1, key_release, s);
+	mlx_hook(s->mlx_win, 4, 1L << 2, mouse_press, s);
+	mlx_hook(s->mlx_win, 5, 1L << 3, mouse_release, s);
+	mlx_hook(s->mlx_win, 6, 1L << 6, mouse_move, s);
 	project2d(*s, 1);
 }
 
@@ -37,10 +37,10 @@ t_2dhypersection	initialise_2d(unsigned int *addr, double zoom)
 	t_2dhypersection	ret;
 
 	ret.addr = addr;
-	ret.center = q_zero();
-	ret.x_vector = q_zero();
-	ret.y_vector = q_zero();
-	ret.z_vector = q_zero();
+	ret.center = Q0;
+	ret.x_vector = Q0;
+	ret.y_vector = Q0;
+	ret.z_vector = Q0;
 	ret.max_i = MAX_ITER;
 	ret.zoom = zoom;
 	return (ret);
@@ -62,15 +62,15 @@ void	initialise_s(t_sack *s, char *win_name)
 	s->img.height = mult * WIN_HEIGHT;
 	s->mlx_win = mlx_new_window(s->mlx, s->img.width, s->img.height, win_name);
 	s->img.img = mlx_new_image(s->mlx, s->img.width, s->img.height);
-	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel, 
+	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel,
 			&s->img.line_length, &s->img.endian);
 	if ('3' != s->type)
 	{
 		s->cloud->points = 0;
-		s->cloud->rot = q_zero();
+		s->cloud->rot = Q0;
 		s->cloud->rot.r = 1;
 		s->user.buttons = 0;
-		s->params2d = initialise_2d((unsigned int*)s->img.addr, 1.0);
+		s->params2d = initialise_2d((unsigned int *)s->img.addr, 1.0);
 	}
 }
 
@@ -85,17 +85,17 @@ void	open_all(char type, double re, double im)
 	sj.mlx = sm.mlx;
 	s3d.mlx = sm.mlx;
 	sm.cloud = &cloud;
-	sj.other3d = (void*)&s3d;
-	sm.other3d = (void*)&s3d;
-	sm.other = (void*)&sj;
-	sj.other = (void*)&sm;
+	sj.other3d = (void *)&s3d;
+	sm.other3d = (void *)&s3d;
+	sm.other = (void *)&sj;
+	sj.other = (void *)&sm;
 	initialise_s(&s3d, "3D");
 	if ('m' == type)
 		initialise_s(&sj, "Julia");
 	initialise_s(&sm, "Mandelbrot");
 	if ('j' == type)
 		initialise_s(&sj, "Julia");
-	sj.params2d.center = q_zero();
+	sj.params2d.center = Q0;
 	sj.params2d.center.j = re;
 	sj.params2d.center.k = im;
 	show_image(&sj);

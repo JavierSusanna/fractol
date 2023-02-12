@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/07 13:36:21 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/11 23:19:02 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,8 @@ void	showhelp(void)
 	printf("Arrows or click and drag mouse to move fractal.\n");
 	printf("Left ctrl key and move mouse over a set ");
 	printf("to change the other set's parameter.\n");
-	printf("Right click for 3D.\n");
+	printf("Right click, drag and release on a window for 3D ");
+	printf("on the other window.\n");
 	printf("*****************************\n");
 }
 

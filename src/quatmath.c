@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/01/27 01:18:37 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/11 17:06:02 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,9 @@ t_quaternion	q_by(t_quaternion q1, t_quaternion q2)
 	return (ret);
 }
 
-t_quaternion	q_zero(void)
+double	dot_product(t_quaternion q1, t_quaternion q2)
 {
-	t_quaternion	q;
-
-	q.r = 0;
-	q.i = 0;
-	q.j = 0;
-	q.k = 0;
-	return (q);
+	return (q1.r * q2.r + q1.i * q2.i + q1.j * q2.j + q1.k * q2.k);
 }
 
 t_quaternion	q_star(t_quaternion q)
@@ -58,26 +52,4 @@ t_quaternion	q_by_scalar(t_quaternion q1, double s)
 	q1.j *= s;
 	q1.k *= s;
 	return (q1);
-}
-
-void	q_unit(t_quaternion *q)
-{
-	double	norm;
-
-	norm = pow(q->r * q->r + q->i * q->i + q->j * q->j + q->k * q->k, -0.5);
-	*q = q_by_scalar(*q, norm);
-}
-
-double	norm2(t_quaternion z)
-{
-	return (z.r * z.r + z.i * z.i);
-}
-
-void	iter(t_quaternion *zc)
-{
-	t_quaternion	tmp;
-
-	tmp = *zc;
-	zc->r = tmp.r * tmp.r - tmp.i * tmp.i + tmp.j;
-	zc->i = tmp.r * tmp.i * 2 + tmp.k;
 }

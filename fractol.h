@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/07 14:59:25 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/11 17:36:14 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,12 @@
 # define PR_LCAPS	0b0000000001000000
 # define OTHER_IMG	0b0000000010000000
 # define DRAG_IMG	0b0000000100000000
-# define MAX_ITER 20
+# define MAX_ITER 50
 # define WIN_WIDTH 400
 # define WIN_HEIGHT 240
 # define MAX_POINTS 230987
 # define ZOOM_FACTOR 2
+# define Q0 (t_quaternion){0, 0, 0, 0}
 
 
 typedef struct	s_data 
@@ -102,7 +103,7 @@ t_quaternion		q_add(t_quaternion q1, t_quaternion q2);
 t_quaternion		q_by(t_quaternion q1, t_quaternion q2);
 t_quaternion		q_star(t_quaternion q);
 t_quaternion		q_by_scalar(t_quaternion q1, double s);
-t_quaternion		q_zero(void);
+double				dot_product(t_quaternion q1, t_quaternion q2);
 void				q_unit(t_quaternion *q);
 double				norm2(t_quaternion z);
 void				iter(t_quaternion *zc);

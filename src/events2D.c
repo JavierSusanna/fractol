@@ -6,21 +6,22 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/07 15:25:26 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/12 01:15:50 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../fractol.h"
 
-int key_press(int keycode, t_sack *s)
+int	key_press(int keycode, t_sack *s)
 {
 	printf("Código de tecla: %d\n", keycode);
 	if (s->user.buttons & PR_LCAPS)
 		chg_iter(s, keycode);
-	else if (KEY_UP == keycode || KEY_DOWN == keycode || 
-			KEY_RIGHT == keycode || KEY_LEFT == keycode)
+	else if (KEY_UP == keycode || KEY_DOWN == keycode
+		|| KEY_RIGHT == keycode || KEY_LEFT == keycode)
 		chg_view(s, keycode);
-	printf("zoom: [%f]\nmax_i: [%f]\n\n", s->params2d.zoom, s->params2d.max_i * log1p(s->params2d.zoom) / 4);
+	printf("zoom: [%f]\nmax_i: [%f]\n\n", s->params2d.zoom,
+		s->params2d.max_i * log1p(s->params2d.zoom) / 4);
 	project2d(*s, 1);
 	if (ESC == keycode)
 		exit(EXIT_SUCCESS);
@@ -31,7 +32,7 @@ int key_press(int keycode, t_sack *s)
 	return (0);
 }
 
-int key_release(int keycode, t_sack *s)
+int	key_release(int keycode, t_sack *s)
 {
 	if (LEFT_CTRL == keycode)
 		s->user.buttons &= 0xffffffff ^ OTHER_IMG;
@@ -40,7 +41,7 @@ int key_release(int keycode, t_sack *s)
 	return (0);
 }
 
-int mouse_press(int button, int x, int y, t_sack *s)
+int	mouse_press(int button, int x, int y, t_sack *s)
 {
 	if (y < 0)
 		return (0);
@@ -52,16 +53,25 @@ int mouse_press(int button, int x, int y, t_sack *s)
 		zoom_at(x, y, 1.0 / ZOOM_FACTOR, s);
 	else
 	{	
-		s->user.buttons |= 1<<(button - 1);
+		s->user.buttons |= 1 << (button - 1);
 		s->user.buttons &= 0xffffffff ^ DRAG_IMG;
+	}
+	if (2 == button)
+	{
+		((t_sack *)(s->other))->params2d.center = pixel_to_quat(x, y, *s);
+		s->cloud->center = pixel_to_quat(x, y, *s);
+		project2d(*(t_sack *)(s->other), 1);
 	}
 	project2d(*s, 1);
 	return (0);
 }
 
-int mouse_release(int button, int x, int y, t_sack *s)
+int	mouse_release(int button, int x, int y, t_sack *s)
 {
-	s->user.buttons &= 0xffffffff ^ (1<<(button - 1));
+	t_sack	*other;
+
+	other = (t_sack *)(s->other);
+	s->user.buttons &= 0xffffffff ^ (1 << (button - 1));
 	if (1 == button)
 	{
 		if (!(s->user.buttons & DRAG_IMG))
@@ -73,17 +83,19 @@ int mouse_release(int button, int x, int y, t_sack *s)
 	}
 	else if (2 == button)
 	{
-		pile3d(*s);
-		project2d(*s, 1);
-		((t_sack *)s->other3d)->params2d.zoom = s->params2d.zoom;
-		s->cloud->rot = q_zero();
-		s->cloud->rot.r = 1;
+		other->params2d.z_vector = q_add(pixel_to_quat(x, y, *s),
+				q_by_scalar(s->cloud->center, -1));
+		pile3d(*other);
+		project2d(*other, 1);
+		((t_sack *)s->other3d)->params2d.zoom = other->params2d.zoom;
+		other->cloud->rot = Q0;
+		other->cloud->rot.r = 1;
 		open_cloud(s->other3d);
 	}
 	return (0);
 }
 
-int mouse_move(int x, int y, t_sack *s)
+int	mouse_move(int x, int y, t_sack *s)
 {
 	if (1 & s->user.buttons)
 	{
@@ -92,7 +104,7 @@ int mouse_move(int x, int y, t_sack *s)
 				s->img.height / 2 + s->user.y - y, *s);
 		project2d(*s, 1);
 	}
-	if (OTHER_IMG & s->user.buttons)
+	if ((OTHER_IMG | 2) & s->user.buttons)
 	{
 		if ('M' == s->type)
 		{
