@@ -6,50 +6,49 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/12 01:28:40 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/13 22:40:10 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../fractol.h"
 
-void	px_to_cloud(int x, int y, t_sack s)
+void	px_to_cloud(t_pixel p, t_sack s)
 {
 	t_quaternion	pt;
 
 	if ((s.cloud)->points > MAX_POINTS)
 		return ;
-	pt = pixel_to_quat(x, y, s);
+	pt = q_by_scalar(pixel_to_quat(p, s), s.params2d.zoom);
 	s.cloud->voxels[s.cloud->points].r = 0;
-	s.cloud->voxels[s.cloud->points].i = dot_product(pt, s.params2d.x_vector);
-	s.cloud->voxels[s.cloud->points].j = dot_product(pt, s.params2d.y_vector);
-	s.cloud->voxels[s.cloud->points].k = dot_product(pt, s.params2d.z_vector);
+	s.cloud->voxels[s.cloud->points].i = dot_prod(pt, s.params2d.base.x);
+	s.cloud->voxels[s.cloud->points].j = dot_prod(pt, s.params2d.base.y);
+	s.cloud->voxels[s.cloud->points].k = dot_prod(pt, s.params2d.base.z);
 	(s.cloud)->points++;
 }
 
-void	find_border(int x, int y, t_sack s)
+void	find_border(t_pixel p, t_sack s)
 {
-	int				bx;
-	int				by;
+	t_pixel			bp;
 	int				n;
 	unsigned int	*p_addr;
 
-	p_addr = s.params2d.addr + WIN_WIDTH * y + x;
+	p_addr = s.params2d.addr + WIN_WIDTH * p.y + p.x;
 	n = -1;
 	while (++n < 4)
 	{
-		by = y + n / 3 - 1;
-		bx = x + n % 3 - 1;
-		if (bx > 0 && bx < WIN_WIDTH && by > 0 && by < WIN_HEIGHT)
+		bp.y = p.y + n / 3 - 1;
+		bp.x = p.x + n % 3 - 1;
+		if (bp.x > 0 && bp.x < WIN_WIDTH && bp.y > 0 && bp.y < WIN_HEIGHT)
 		{
-			if (*(p_addr) > 1 && !*(s.params2d.addr + WIN_WIDTH * by + bx))
+			if (*(p_addr) > 1 && !*(s.params2d.addr + WIN_WIDTH * bp.y + bp.x))
 			{
-				*(s.params2d.addr + WIN_WIDTH * by + bx) = 1;
-				px_to_cloud(bx, by, s);
+				*(s.params2d.addr + WIN_WIDTH * bp.y + bp.x) = 1;
+				px_to_cloud(bp, s);
 			}
-			else if (!*(p_addr) && *(s.params2d.addr + WIN_WIDTH * by + bx) > 1)
+			else if (!*(p_addr) && *(s.params2d.addr + WIN_WIDTH * bp.y + bp.x) > 1)
 			{
 				*(p_addr) = 1;
-				px_to_cloud(x, y, s);
+				px_to_cloud(p, s);
 			}
 		}
 	}
@@ -79,8 +78,8 @@ void	pile3d(t_sack s)
 	double			part;
 
 	c0 = s.cloud->center;
-	z_v = s.params2d.z_vector;
-	q_unit(&(s.params2d.z_vector));
+	z_v = s.params2d.base.z;
+	q_unit(&(s.params2d.base.z));
 	project2d(s, -1);
 	s.cloud->center = s.params2d.center;
 	z = 0;

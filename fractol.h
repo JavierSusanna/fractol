@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/11 17:36:14 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/13 22:33:30 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@
 # define MAX_POINTS 230987
 # define ZOOM_FACTOR 2
 # define Q0 (t_quaternion){0, 0, 0, 0}
+# define QR (t_quaternion){1, 0, 0, 0}
+# define QI (t_quaternion){0, 1, 0, 0}
+# define QJ (t_quaternion){0, 0, 1, 0}
+# define QK (t_quaternion){0, 0, 0, 1}
 
 
 typedef struct	s_data 
@@ -59,23 +63,34 @@ typedef struct	s_quaternion
 	double	k;
 }				t_quaternion;
 
+typedef struct	s_base
+{
+	t_quaternion	x;
+	t_quaternion	y;
+	t_quaternion	z;
+
+}				t_base;
+
 typedef struct	s_2dhypersection
 {
 	unsigned int	*addr;
 	t_quaternion	center;
-	t_quaternion	x_vector;
-	t_quaternion	y_vector;
-	t_quaternion	z_vector;
+	t_base			base;
 	int				max_i;
 	double			zoom;
 
 }				t_2dhypersection;
 
+typedef struct	s_pixel
+{
+	int	x;
+	int	y;
+}				t_pixel;
+
 typedef struct	s_user_state
 {
 	unsigned int	buttons;
-	int				x;
-	int				y;
+	t_pixel			pxl;
 }				t_user_state;
 
 typedef struct	s_cloud
@@ -103,24 +118,27 @@ t_quaternion		q_add(t_quaternion q1, t_quaternion q2);
 t_quaternion		q_by(t_quaternion q1, t_quaternion q2);
 t_quaternion		q_star(t_quaternion q);
 t_quaternion		q_by_scalar(t_quaternion q1, double s);
-double				dot_product(t_quaternion q1, t_quaternion q2);
+double				dot_prod(t_quaternion q1, t_quaternion q2);
 void				q_unit(t_quaternion *q);
 double				norm2(t_quaternion z);
 void				iter(t_quaternion *zc);
 void				pixel_axis(t_2dhypersection sect,
 						t_quaternion *x_axis, t_quaternion *y_axis);
-t_quaternion		pixel_to_quat(int x, int y, t_sack s);
+t_quaternion		pixel_to_quat(t_pixel p, t_sack s);
+t_quaternion		pass_center(t_pixel p, t_sack s);
+t_quaternion		pxl_other(t_pixel p, t_sack s);
 void				chg_iter(t_sack *s, int key);
 void				chg_view(t_sack *s, int key);
-void				px_to_cloud(int	x, int y, t_sack s);
-void				find_border(int x, int y, t_sack s);
+void				px_to_cloud(t_pixel p, t_sack s);
+void				find_border(t_pixel p, t_sack s);
 void				clear_img(t_data img);
 unsigned int		color(int scheme, t_quaternion point, t_sack s);
 int					project2d(t_sack s, int colors);
 void				center_cloud(t_sack s);
 void				pile3d(t_sack s);
-void				switch_wins(t_sack *s);
-void				zoom_at(int x, int y, double zf, t_sack *s);
+/*void				switch_wins(t_sack *s);*/
+void				line(t_pixel p0, t_pixel p1, t_sack s);
+void				zoom_at(t_pixel p, double zf, t_sack *s);
 int 				key_press(int keycode, t_sack *s);
 int 				key_release(int keycode, t_sack *s);
 int 				mouse_press(int button, int x, int y, t_sack *s);
@@ -128,8 +146,8 @@ int 				mouse_release(int button, int x, int y, t_sack *s);
 int 				mouse_move(int x, int y, t_sack *s);
 void				show_image(t_sack *s);
 double				ft_strtof(char *str);
-void				showhelp();
-t_2dhypersection	initialise_2D(unsigned int *addr, double zoom);
+void				initialise_vectors(t_sack *s);
+t_2dhypersection	initialise_2D(unsigned int *addr);
 void				initialise_s(t_sack *s, char *win_name);
 void				plot(t_sack s, int paint);
 t_quaternion		rotate(t_quaternion p, t_quaternion rot);
@@ -139,6 +157,7 @@ int					vmouse_release(int button, int x, int y, t_sack *s);
 int					vmouse_move(int x, int y, t_sack *s);
 void				open_cloud(t_sack *s);
 void				open_all(char type, double re, double im);
+void				showhelp();
 int					main(int nargs, char **args);
 
 #endif

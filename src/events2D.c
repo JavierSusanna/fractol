@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/12 01:15:50 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/13 23:06:39 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,12 @@ int	mouse_press(int button, int x, int y, t_sack *s)
 {
 	if (y < 0)
 		return (0);
-	s->user.x = x;
-	s->user.y = y;
+	s->user.pxl.x = x;
+	s->user.pxl.y = y;
 	if (5 == button)
-		zoom_at(x, y, ZOOM_FACTOR, s);
+		zoom_at(s->user.pxl, ZOOM_FACTOR, s);
 	else if (4 == button)
-		zoom_at(x, y, 1.0 / ZOOM_FACTOR, s);
+		zoom_at(s->user.pxl, 1.0 / ZOOM_FACTOR, s);
 	else
 	{	
 		s->user.buttons |= 1 << (button - 1);
@@ -58,8 +58,8 @@ int	mouse_press(int button, int x, int y, t_sack *s)
 	}
 	if (2 == button)
 	{
-		((t_sack *)(s->other))->params2d.center = pixel_to_quat(x, y, *s);
-		s->cloud->center = pixel_to_quat(x, y, *s);
+		((t_sack *)(s->other))->params2d.center = pass_center(s->user.pxl, *s);
+		s->cloud->center = ((t_sack *)(s->other))->params2d.center;
 		project2d(*(t_sack *)(s->other), 1);
 	}
 	project2d(*s, 1);
@@ -76,20 +76,20 @@ int	mouse_release(int button, int x, int y, t_sack *s)
 	{
 		if (!(s->user.buttons & DRAG_IMG))
 		{
-			s->params2d.center = pixel_to_quat(x, y, *s);
+			s->params2d.center = pixel_to_quat((t_pixel){x, y}, *s);
 			project2d(*s, 1);
 		}
 		s->user.buttons &= 0xffffffff ^ DRAG_IMG;
 	}
 	else if (2 == button)
 	{
-		other->params2d.z_vector = q_add(pixel_to_quat(x, y, *s),
+		((t_sack *)(s->other))->params2d.center = pass_center((t_pixel){x, y}, *s);
+		other->params2d.base.z = q_add(((t_sack *)(s->other))->params2d.center,
 				q_by_scalar(s->cloud->center, -1));
 		pile3d(*other);
 		project2d(*other, 1);
-		((t_sack *)s->other3d)->params2d.zoom = other->params2d.zoom;
-		other->cloud->rot = Q0;
-		other->cloud->rot.r = 1;
+		((t_sack *)s->other3d)->params2d.zoom = 1;
+		other->cloud->rot = QR;
 		open_cloud(s->other3d);
 	}
 	return (0);
@@ -97,28 +97,23 @@ int	mouse_release(int button, int x, int y, t_sack *s)
 
 int	mouse_move(int x, int y, t_sack *s)
 {
+	t_pixel	p;
+
 	if (1 & s->user.buttons)
 	{
 		s->user.buttons |= DRAG_IMG;
-		s->params2d.center = pixel_to_quat(s->img.width / 2 + s->user.x - x,
-				s->img.height / 2 + s->user.y - y, *s);
+		p.x = s->img.width / 2 + s->user.pxl.x - x;
+		p.y = s->img.height / 2 + s->user.pxl.y - y;
+		s->params2d.center = pixel_to_quat(p, *s);
 		project2d(*s, 1);
 	}
+	p.x = x;
+	p.y = y;
 	if ((OTHER_IMG | 2) & s->user.buttons)
 	{
-		if ('M' == s->type)
-		{
-			((t_sack *)s->other)->params2d.center.j = pixel_to_quat(x, y, *s).j;
-			((t_sack *)s->other)->params2d.center.k = pixel_to_quat(x, y, *s).k;
-		}
-		else
-		{
-			((t_sack *)s->other)->params2d.center.r = pixel_to_quat(x, y, *s).r;
-			((t_sack *)s->other)->params2d.center.i = pixel_to_quat(x, y, *s).i;
-		}
+		((t_sack *)(s->other))->params2d.center = pass_center(p, *s);
 		project2d(*((t_sack *)s->other), 1);
 	}
-	s->user.x = x;
-	s->user.y = y;
+	s->user.pxl = p;
 	return (0);
 }

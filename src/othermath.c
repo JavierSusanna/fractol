@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/12 01:34:49 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/13 22:50:03 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	q_unit(t_quaternion *q)
 {
 	double	norm;
 
-	norm = pow(dot_product(*q, *q), -0.5);
+	norm = pow(dot_prod(*q, *q), -0.5);
 	*q = q_by_scalar(*q, norm);
 }
 
@@ -25,20 +25,22 @@ double	norm2(t_quaternion z)
 	return (z.r * z.r + z.i * z.i);
 }
 
-void	zoom_at(int x, int y, double zf, t_sack *s)
+void	zoom_at(t_pixel p, double zf, t_sack *s)
 {
-	s->params2d.center = pixel_to_quat(
-			x * (1 - 1 / zf) + WIN_WIDTH / 2 / zf,
-			y * (1 - 1 / zf) + WIN_HEIGHT / 2 / zf,
-			*s);
+	double	tmp;
+
+	tmp = (double)p.x * (1.0 - 1.0 / zf) + (double)WIN_WIDTH / 2.0 / zf;
+	p.x = (int)tmp;
+	tmp = (double)p.y * (1.0 - 1.0 / zf) + (double)WIN_HEIGHT / 2.0 / zf;
+	p.y = (int)tmp;
+	s->params2d.center = pixel_to_quat(p, *s);
 	s->params2d.zoom *= zf;
 }
 
 void	plot(t_sack s, int paint)
 {
 	int				n;
-	int				x;
-	int				y;
+	t_pixel			p;
 	t_quaternion	tmp;
 	unsigned int	*addr;
 
@@ -47,12 +49,12 @@ void	plot(t_sack s, int paint)
 	while (++n < s.cloud->points)
 	{
 		tmp = rotate(s.cloud->voxels[n], s.cloud->rot);
-		x = tmp.i * s.img.height + s.params2d.zoom * s.img.width;
-		y = tmp.k * s.img.height + s.params2d.zoom * s.img.height;
-		x /= s.params2d.zoom * 2;
-		y /= s.params2d.zoom * 2;
-		if (x >= 0 && x < s.img.width && y >= 0 && y < s.img.height)
-			*(addr + y * s.img.width + x) = 0x00ffffffU * paint;
+		p.x = tmp.i * s.img.height + s.params2d.zoom * s.img.width;
+		p.y = tmp.k * s.img.height + s.params2d.zoom * s.img.height;
+		p.x /= s.params2d.zoom * 2;
+		p.y /= s.params2d.zoom * 2;
+		if (p.x >= 0 && p.x < s.img.width && p.y >= 0 && p.y < s.img.height)
+			*(addr + p.y * s.img.width + p.x) = 0x00ffffffU * paint;
 	}
 	mlx_put_image_to_window(s.mlx, s.mlx_win, s.img.img, 0, 0);
 }

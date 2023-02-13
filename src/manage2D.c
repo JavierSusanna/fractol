@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/11 10:49:16 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/13 22:18:09 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,24 +47,46 @@ unsigned int	color(int scheme, t_quaternion point, t_sack s)
 
 int	project2d(t_sack s, int colors)
 {
-	int				x;
-	int				y;
+	t_pixel			p;
 	unsigned int	*pixel_addr;
 
 	pixel_addr = s.params2d.addr;
-	y = -1;
-	while (++y < WIN_HEIGHT)
+	p.y = -1;
+	while (++p.y < WIN_HEIGHT)
 	{
-		x = -1;
-		while (++x < WIN_WIDTH)
+		p.x = -1;
+		while (++p.x < WIN_WIDTH)
 		{
-			*(pixel_addr) = color(colors, pixel_to_quat(x, y, s), s);
+			*(pixel_addr) = color(colors, pixel_to_quat(p, s), s);
 			if (2 == colors)
-				find_border(x, y, s);
+				find_border(p, s);
 			pixel_addr++;
 		}
 	}
 	mlx_put_image_to_window(s.mlx, s.mlx_win, s.img.img, 0, 0);
 	mlx_do_sync(s.mlx);
 	return (0);
+}
+
+void	line(t_pixel p0, t_pixel p1, t_sack s)
+{
+	int		n;
+
+	n = -1;
+	if ((p0.x - p1.x) * (p0.x - p1.x) > (p0.y - p1.y) * (p0.y - p1.y))
+	{
+		if (p1.x < p0.x)
+			line(p1, p0, s);
+		while (++n <= p1.x - p0.x)
+			*(s.params2d.addr + (p0.x + n) + s.img.width
+					* (p0.y + n * (p1.y - p0.y) / (p1.x - p0.x))) = 0x0000ffff;
+	}
+	else
+	{
+		if (p1.y < p0.y)
+			line(p1, p0, s);
+		while (++n <= p1.y - p0.y)
+			*(s.params2d.addr + (p0.y + n) * s.img.width
+					+ (p0.x + n * (p1.x - p0.x) / (p1.y - p0.y))) = 0x0000ffff;
+	}
 }

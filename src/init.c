@@ -6,24 +6,29 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/11 17:05:33 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/13 13:19:15 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../fractol.h"
 
-void	show_image(t_sack *s)
+void	initialise_base(t_sack *s)
 {
 	if ('J' == s->type)
 	{
-		s->params2d.x_vector.r = 1.0;
-		s->params2d.y_vector.i = 1.0;
+		s->params2d.base.x = QR;
+		s->params2d.base.y = QI;
 	}
 	if ('M' == s->type)
 	{
-		s->params2d.x_vector.j = 1.0;
-		s->params2d.y_vector.k = 1.0;
+		s->params2d.base.x = QJ;
+		s->params2d.base.y = QK;
 	}
+}
+
+void	show_image(t_sack *s)
+{
+	initialise_base(s);
 	mlx_hook(s->mlx_win, 2, 1L << 0, key_press, s);
 	mlx_hook(s->mlx_win, 3, 1L << 1, key_release, s);
 	mlx_hook(s->mlx_win, 4, 1L << 2, mouse_press, s);
@@ -32,17 +37,17 @@ void	show_image(t_sack *s)
 	project2d(*s, 1);
 }
 
-t_2dhypersection	initialise_2d(unsigned int *addr, double zoom)
+t_2dhypersection	initialise_2d(unsigned int *addr)
 {
 	t_2dhypersection	ret;
 
 	ret.addr = addr;
 	ret.center = Q0;
-	ret.x_vector = Q0;
-	ret.y_vector = Q0;
-	ret.z_vector = Q0;
+	ret.base.x = Q0;
+	ret.base.y = Q0;
+	ret.base.z = Q0;
 	ret.max_i = MAX_ITER;
-	ret.zoom = zoom;
+	ret.zoom = 1.0;
 	return (ret);
 }
 
@@ -70,7 +75,7 @@ void	initialise_s(t_sack *s, char *win_name)
 		s->cloud->rot = Q0;
 		s->cloud->rot.r = 1;
 		s->user.buttons = 0;
-		s->params2d = initialise_2d((unsigned int *)s->img.addr, 1.0);
+		s->params2d = initialise_2d((unsigned int *)s->img.addr);
 	}
 }
 
