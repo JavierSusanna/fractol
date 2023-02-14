@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/13 22:50:03 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/14 10:43:10 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ void	q_unit(t_quaternion *q)
 	*q = q_by_scalar(*q, norm);
 }
 
-double	norm2(t_quaternion z)
+int	confined(t_quaternion z)
 {
-	return (z.r * z.r + z.i * z.i);
+	return (dot_prod(z, z) < 36);
+/*	return (z.r * z.r + z.i * z.i < 16);*/
 }
 
 void	zoom_at(t_pixel p, double zf, t_sack *s)

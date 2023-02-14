@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/13 22:18:09 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/14 17:49:14 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ unsigned int	color(int scheme, t_quaternion point, t_sack s)
 	max_i = s.params2d.max_i;
 	zc = point;
 	i = -1;
-	while (++i < max_i && norm2(zc) < 16.0)
+	while (++i < max_i && confined(zc))
 		iter(&zc);
 	if (i >= max_i)
 		return (0x00000000);
@@ -63,30 +63,41 @@ int	project2d(t_sack s, int colors)
 			pixel_addr++;
 		}
 	}
+	draw_ln(s.user.ln, s);
 	mlx_put_image_to_window(s.mlx, s.mlx_win, s.img.img, 0, 0);
 	mlx_do_sync(s.mlx);
 	return (0);
 }
 
-void	line(t_pixel p0, t_pixel p1, t_sack s)
+void	draw_ln(t_line l, t_sack s)
 {
 	int		n;
+	t_line	aux;
 
 	n = -1;
-	if ((p0.x - p1.x) * (p0.x - p1.x) > (p0.y - p1.y) * (p0.y - p1.y))
+	if (!(s.user.buttons & 2) || (!(l.p0.x - l.p1.x) && !(l.p0.y - l.p1.y))
+			|| l.p1.x < 0 || l.p1.x >= s.img.width
+			|| l.p1.y < 0 || l.p1.y >= s.img.height)
+	   return ;
+	aux.p0 = l.p1;
+	aux.p1 = l.p0;
+	if ((l.p0.x - l.p1.x) * (l.p0.x - l.p1.x) >
+			(l.p0.y - l.p1.y) * (l.p0.y - l.p1.y))
 	{
-		if (p1.x < p0.x)
-			line(p1, p0, s);
-		while (++n <= p1.x - p0.x)
-			*(s.params2d.addr + (p0.x + n) + s.img.width
-					* (p0.y + n * (p1.y - p0.y) / (p1.x - p0.x))) = 0x0000ffff;
+		if (l.p1.x < l.p0.x)
+			draw_ln(aux, s);
+		while (++n <= l.p1.x - l.p0.x)
+			*(s.params2d.addr + (l.p0.x + n) + s.img.width
+					* (l.p0.y + n * (l.p1.y - l.p0.y) / (l.p1.x - l.p0.x)))
+				= 0x0000ffff;
 	}
 	else
 	{
-		if (p1.y < p0.y)
-			line(p1, p0, s);
-		while (++n <= p1.y - p0.y)
-			*(s.params2d.addr + (p0.y + n) * s.img.width
-					+ (p0.x + n * (p1.x - p0.x) / (p1.y - p0.y))) = 0x0000ffff;
+		if (l.p1.y < l.p0.y)
+			draw_ln(aux, s);
+		while (++n <= l.p1.y - l.p0.y)
+			*(s.params2d.addr + (l.p0.y + n) * s.img.width
+					+ (l.p0.x + n * (l.p1.x - l.p0.x) / (l.p1.y - l.p0.y)))
+				= 0x0000ffff;
 	}
 }

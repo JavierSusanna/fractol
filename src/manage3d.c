@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/13 22:40:10 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/14 13:29:58 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	pile3d(t_sack s)
 	t_quaternion	c0;
 	double			part;
 
-	c0 = s.cloud->center;
+	c0 = pass_center(((t_sack *)(s.other))->user.ln.p0, *(t_sack *)(s.other));
 	z_v = s.params2d.base.z;
 	q_unit(&(s.params2d.base.z));
 	project2d(s, -1);
@@ -97,4 +97,14 @@ void	pile3d(t_sack s)
 		part = part - trunc(part);
 	}
 	center_cloud(s);
+}
+
+void	open_cloud(t_sack *s)
+{
+	clear_img(s->img);
+	mlx_hook(s->mlx_win, 2, 1L << 0, vkey_press, s);
+	mlx_hook(s->mlx_win, 4, 1L << 2, vmouse_press, s);
+	mlx_hook(s->mlx_win, 5, 1L << 3, vmouse_release, s);
+	mlx_hook(s->mlx_win, 6, 1L << 6, vmouse_move, s);
+	plot(*s, 1);
 }

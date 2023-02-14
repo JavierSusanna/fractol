@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/13 22:33:30 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/14 17:21:47 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,10 +87,16 @@ typedef struct	s_pixel
 	int	y;
 }				t_pixel;
 
+typedef struct	s_line
+{
+	t_pixel	p0;
+	t_pixel	p1;
+}				t_line;
+
 typedef struct	s_user_state
 {
 	unsigned int	buttons;
-	t_pixel			pxl;
+	t_line			ln;
 }				t_user_state;
 
 typedef struct	s_cloud
@@ -114,49 +120,69 @@ typedef struct	s_sack
 	void				*other3d;
 }				t_sack;
 
-t_quaternion		q_add(t_quaternion q1, t_quaternion q2);
-t_quaternion		q_by(t_quaternion q1, t_quaternion q2);
-t_quaternion		q_star(t_quaternion q);
-t_quaternion		q_by_scalar(t_quaternion q1, double s);
-double				dot_prod(t_quaternion q1, t_quaternion q2);
+
+/*othermath.c*/
 void				q_unit(t_quaternion *q);
-double				norm2(t_quaternion z);
-void				iter(t_quaternion *zc);
+int					confined(t_quaternion z);
+void				zoom_at(t_pixel p, double zf, t_sack *s);
+void				plot(t_sack s, int paint);
+t_quaternion		rotate(t_quaternion p, t_quaternion rot);
+
+/*imagemath.c*/
 void				pixel_axis(t_2dhypersection sect,
 						t_quaternion *x_axis, t_quaternion *y_axis);
 t_quaternion		pixel_to_quat(t_pixel p, t_sack s);
 t_quaternion		pass_center(t_pixel p, t_sack s);
 t_quaternion		pxl_other(t_pixel p, t_sack s);
-void				chg_iter(t_sack *s, int key);
-void				chg_view(t_sack *s, int key);
+void				iter(t_quaternion *zc);
+
+/*manage3d.c*/
 void				px_to_cloud(t_pixel p, t_sack s);
 void				find_border(t_pixel p, t_sack s);
+void				center_cloud(t_sack s);
+void				pile3d(t_sack s);
+void				open_cloud(t_sack *s);
+
+/*manage2d.c*/
 void				clear_img(t_data img);
 unsigned int		color(int scheme, t_quaternion point, t_sack s);
 int					project2d(t_sack s, int colors);
-void				center_cloud(t_sack s);
-void				pile3d(t_sack s);
-/*void				switch_wins(t_sack *s);*/
-void				line(t_pixel p0, t_pixel p1, t_sack s);
-void				zoom_at(t_pixel p, double zf, t_sack *s);
+void				draw_ln(t_line l, t_sack s);
+
+
+/*events3d.c*/
+int 				vkey_press(int keycode, t_sack *s);
+int					vmouse_press(int button, int x, int y, t_sack *s);
+int					vmouse_release(int button, int x, int y, t_sack *s);
+int					vmouse_move(int x, int y, t_sack *s);
+
+/*events2d2.c*/
+void				chg_view(t_sack *s, int key);
+void				chg_iter(t_sack *s, int key);
+
+/*events2d.c*/
 int 				key_press(int keycode, t_sack *s);
 int 				key_release(int keycode, t_sack *s);
 int 				mouse_press(int button, int x, int y, t_sack *s);
 int 				mouse_release(int button, int x, int y, t_sack *s);
 int 				mouse_move(int x, int y, t_sack *s);
+
+/*quatmath.c*/
+t_quaternion		q_add(t_quaternion q1, t_quaternion q2);
+t_quaternion		q_by(t_quaternion q1, t_quaternion q2);
+double				dot_prod(t_quaternion q1, t_quaternion q2);
+t_quaternion		q_by_scalar(t_quaternion q1, double s);
+t_quaternion		q_star(t_quaternion q);
+
+/*init.c*/
+void				initialise_base(t_sack *s);
 void				show_image(t_sack *s);
-double				ft_strtof(char *str);
-void				initialise_vectors(t_sack *s);
 t_2dhypersection	initialise_2D(unsigned int *addr);
 void				initialise_s(t_sack *s, char *win_name);
-void				plot(t_sack s, int paint);
-t_quaternion		rotate(t_quaternion p, t_quaternion rot);
-int 				vkey_press(int keycode, t_sack *s);
-int					vmouse_press(int button, int x, int y, t_sack *s);
-int					vmouse_release(int button, int x, int y, t_sack *s);
-int					vmouse_move(int x, int y, t_sack *s);
-void				open_cloud(t_sack *s);
 void				open_all(char type, double re, double im);
+
+/*fractol.c*/
+double				ft_strtof(char *str);
 void				showhelp();
 int					main(int nargs, char **args);
 

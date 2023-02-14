@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/13 13:19:15 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/14 17:19:19 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,18 +53,16 @@ t_2dhypersection	initialise_2d(unsigned int *addr)
 
 void	initialise_s(t_sack *s, char *win_name)
 {
-	int	mult;
-
-	mult = 1;
+	s->img.height = 1;
 	s->type = win_name[0];
 	if ('3' == s->type)
-		mult = 1200 / WIN_HEIGHT;
+		s->img.height = 1200 / WIN_HEIGHT;
 	if ('M' == s->type)
 		((t_sack *)(s->other3d))->cloud = s->cloud;
 	if ('J' == s->type)
 		s->cloud = ((t_sack *)(s->other))->cloud;
-	s->img.width = mult * WIN_WIDTH;
-	s->img.height = mult * WIN_HEIGHT;
+	s->img.width = s->img.height * WIN_WIDTH;
+	s->img.height *= WIN_HEIGHT;
 	s->mlx_win = mlx_new_window(s->mlx, s->img.width, s->img.height, win_name);
 	s->img.img = mlx_new_image(s->mlx, s->img.width, s->img.height);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel,
@@ -77,6 +75,9 @@ void	initialise_s(t_sack *s, char *win_name)
 		s->user.buttons = 0;
 		s->params2d = initialise_2d((unsigned int *)s->img.addr);
 	}
+	s->user.ln.p0.x = 0;
+	s->user.ln.p0.y = 0;
+	s->user.ln.p1 = s->user.ln.p0;
 }
 
 void	open_all(char type, double re, double im)

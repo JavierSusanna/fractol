@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/13 18:09:21 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/14 09:21:20 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,6 @@ double	dot_prod(t_quaternion q1, t_quaternion q2)
 	return (q1.r * q2.r + q1.i * q2.i + q1.j * q2.j + q1.k * q2.k);
 }
 
-t_quaternion	q_star(t_quaternion q)
-{
-	q.i *= -1;
-	q.j *= -1;
-	q.k *= -1;
-	return (q);
-}
-
 t_quaternion	q_by_scalar(t_quaternion q1, double s)
 {
 	q1.r *= s;
@@ -52,4 +44,12 @@ t_quaternion	q_by_scalar(t_quaternion q1, double s)
 	q1.j *= s;
 	q1.k *= s;
 	return (q1);
+}
+
+t_quaternion	q_star(t_quaternion q)
+{
+	q.i *= -1;
+	q.j *= -1;
+	q.k *= -1;
+	return (q);
 }

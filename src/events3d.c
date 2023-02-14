@@ -6,11 +6,18 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 08:41:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/13 21:45:48 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/14 12:37:03 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../fractol.h"
+
+int	vkey_press(int keycode, t_sack *s)
+{
+	if (ESC == keycode)
+		exit(EXIT_SUCCESS);
+	return (s->type);
+}
 
 int	vmouse_press(int button, int x, int y, t_sack *s)
 {
@@ -28,16 +35,9 @@ int	vmouse_press(int button, int x, int y, t_sack *s)
 		plot(*s, 1);
 		printf("zoom3d: [%f]\n", s->params2d.zoom);
 	}
-	s->user.pxl.x = x;
-	s->user.pxl.y = y;
+	s->user.ln.p0.x = x;
+	s->user.ln.p0.y = y;
 	return (0);
-}
-
-int	vkey_press(int keycode, t_sack *s)
-{
-	if (ESC == keycode)
-		exit(EXIT_SUCCESS);
-	return (s->type);
 }
 
 int	vmouse_release(int button, int x, int y, t_sack *s)
@@ -56,10 +56,10 @@ int	vmouse_move(int x, int y, t_sack *s)
 
 	if (!(s->user.buttons))
 		return (0);
-	x1 = (double)(x - s->user.pxl.x);
-	y1 = (double)(y - s->user.pxl.y);
-	s->user.pxl.x = x;
-	s->user.pxl.y = y;
+	x1 = (double)(x - s->user.ln.p0.x);
+	y1 = (double)(y - s->user.ln.p0.y);
+	s->user.ln.p0.x = x;
+	s->user.ln.p0.y = y;
 	h1 = hypot(x1, y1);
 	if (!h1)
 		h1 = 1;
@@ -73,14 +73,4 @@ int	vmouse_move(int x, int y, t_sack *s)
 	q_unit(&(s->cloud->rot));
 	plot(*s, 1);
 	return (0);
-}
-
-void	open_cloud(t_sack *s)
-{
-	clear_img(s->img);
-	mlx_hook(s->mlx_win, 2, 1L << 0, vkey_press, s);
-	mlx_hook(s->mlx_win, 4, 1L << 2, vmouse_press, s);
-	mlx_hook(s->mlx_win, 5, 1L << 3, vmouse_release, s);
-	mlx_hook(s->mlx_win, 6, 1L << 6, vmouse_move, s);
-	plot(*s, 1);
 }
