@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/14 17:21:29 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/15 14:58:25 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ int	key_press(int keycode, t_sack *s)
 {
 	printf("Código de tecla: %d\n", keycode);
 
+	if (CHG_BASE == keycode)
+		chg_base(s);
 	if (!(s->user.ln.p0.x) && !(s->user.ln.p0.y))
 		s->user.ln.p0.x = -100;
 	if (s->user.buttons & PR_LCAPS)

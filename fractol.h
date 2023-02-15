@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/14 17:21:47 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/15 15:13:08 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 
 
 # define ESC 53
+# define CHG_BASE 21
 # define KEY_UP 126
 # define KEY_DOWN 125
 # define KEY_LEFT 123
@@ -157,6 +158,7 @@ int					vmouse_release(int button, int x, int y, t_sack *s);
 int					vmouse_move(int x, int y, t_sack *s);
 
 /*events2d2.c*/
+void				chg_base(t_sack *s);
 void				chg_view(t_sack *s, int key);
 void				chg_iter(t_sack *s, int key);
 

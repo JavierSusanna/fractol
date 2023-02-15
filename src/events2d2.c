@@ -6,11 +6,36 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/13 22:45:14 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/15 15:26:18 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../fractol.h"
+
+void	chg_base(t_sack *s)
+{
+	t_quaternion	tmp;
+
+	tmp = s->params2d.base.y;
+	if ('M' == s->type)
+		chg_base((t_sack *)(s->other));
+	else if (tmp.k)
+	{
+		s->params2d.base.y = QI;
+		((t_sack *)(s->other))->params2d.base.y = QK;
+	}
+	else if (tmp.j)
+	{
+		s->params2d.base.y = QK;
+		((t_sack *)(s->other))->params2d.base.x = QJ;
+		((t_sack *)(s->other))->params2d.base.y = QI;
+	}
+	else if (tmp.i)
+	{
+		s->params2d.base.y = QJ;
+		((t_sack *)(s->other))->params2d.base.x = QI;
+	}
+}
 
 void	chg_view(t_sack *s, int key)
 {
