@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 17:17:43 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/16 19:23:03 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,8 +63,8 @@ int	mouse_press(int button, int x, int y, t_sack *s)
 	}
 	if (2 == button)
 	{
-		((t_sack *)(s->other))->params2d.center = pass_center(s->user.ln.p0, *s);
-/*		s->cloud->center = ((t_sack *)(s->other))->params2d.center;*/
+		((t_sack *)(s->other))->params2d.center
+			= pass_center(s->user.ln.p0, *s);
 		project2d(*(t_sack *)(s->other), 1);
 	}
 	project2d(*s, 1);
@@ -88,7 +88,7 @@ int	mouse_release(int button, int x, int y, t_sack *s)
 	}
 	else if (2 == button)
 	{
-		((t_sack *)(s->other))->params2d.center = pass_center(s->user.ln.p1, *s);
+		other->params2d.center = pass_center(s->user.ln.p1, *s);
 		other->params2d.base.z = q_add(((t_sack *)(s->other))->params2d.center,
 				q_by_scalar(pass_center(s->user.ln.p0, *s), -1));
 		pile3d(*other);
@@ -105,10 +105,7 @@ int	mouse_move(int x, int y, t_sack *s)
 	t_pixel	p;
 
 	if (-100 == s->user.ln.p0.x)
-	{
-		s->user.ln.p0.x = x;
-		s->user.ln.p0.y = y;
-	}
+		s->user.ln.p0 = (t_pixel){x, y};
 	if (1 & s->user.buttons)
 	{
 		s->user.buttons |= DRAG_IMG;
@@ -117,8 +114,7 @@ int	mouse_move(int x, int y, t_sack *s)
 		s->params2d.center = pixel_to_quat(p, *s);
 		project2d(*s, 1);
 	}
-	p.x = x;
-	p.y = y;
+	p = (t_pixel){x, y};
 	if (2 & s->user.buttons)
 	{
 		s->user.ln.p1 = p;

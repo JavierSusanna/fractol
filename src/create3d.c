@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 11:39:36 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/16 19:40:53 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,8 @@ void	find_border(t_pixel p, t_sack s)
 				*(s.params2d.addr + WIN_WIDTH * bp.y + bp.x) = 1;
 				px_to_cloud(bp, s);
 			}
-			else if (!*(p_addr) && *(s.params2d.addr + WIN_WIDTH * bp.y + bp.x) > 1)
+			else if (!*(p_addr)
+				&& *(s.params2d.addr + WIN_WIDTH * bp.y + bp.x) > 1)
 			{
 				*(p_addr) = 1;
 				px_to_cloud(p, s);
@@ -99,12 +100,18 @@ void	pile3d(t_sack s)
 	center_cloud(s);
 }
 
-void	open_cloud(t_sack *s)
+t_quaternion	pixel_noise_quat(t_pixel p, t_sack s)
 {
-	clear_img(s->img);
-	mlx_hook(s->mlx_win, 2, 1L << 0, vkey_press, s);
-	mlx_hook(s->mlx_win, 4, 1L << 2, vmouse_press, s);
-	mlx_hook(s->mlx_win, 5, 1L << 3, vmouse_release, s);
-	mlx_hook(s->mlx_win, 6, 1L << 6, vmouse_move, s);
-	plot(*s, 1);
+	t_quaternion	x_axis;
+	t_quaternion	y_axis;
+	t_quaternion	z_axis;
+	t_quaternion	ret;
+
+	pixel_axis(s.params2d, &x_axis, &y_axis, &z_axis);
+	ret = q_add(s.params2d.center, q_by_scalar(x_axis, p.x - WIN_WIDTH / 2));
+	ret = q_add(ret, q_by_scalar(y_axis, -(p.y - WIN_HEIGHT / 2)));
+	ret = q_add(ret, q_by_scalar(x_axis, ((double)rand()) / RAND_MAX - 0.5));
+	ret = q_add(ret, q_by_scalar(y_axis, ((double)rand()) / RAND_MAX - 0.5));
+	ret = q_add(ret, q_by_scalar(z_axis, (2.0 * rand()) / RAND_MAX - 1));
+	return (ret);
 }

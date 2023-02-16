@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 11:40:19 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/16 20:25:49 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,6 @@ typedef struct	s_sack
 
 /*othermath.c*/
 void				q_unit(t_quaternion *q);
-int					confined(t_quaternion z);
 void				zoom_at(t_pixel p, double zf, t_sack *s);
 void				plot(t_sack s, int paint);
 t_quaternion		rotate(t_quaternion p, t_quaternion rot);
