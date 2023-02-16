@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/15 15:26:18 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/15 21:26:47 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	chg_base(t_sack *s)
 		s->params2d.base.y = QJ;
 		((t_sack *)(s->other))->params2d.base.x = QI;
 	}
+	project2d(*(t_sack *)(s->other), 1);
 }
 
 void	chg_view(t_sack *s, int key)

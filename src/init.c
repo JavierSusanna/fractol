@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/14 17:19:19 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/16 00:39:02 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ void	initialise_s(t_sack *s, char *win_name)
 		s->cloud->points = 0;
 		s->cloud->rot = Q0;
 		s->cloud->rot.r = 1;
+		s->cloud->rot_light = Q0;
+		s->cloud->rot_light.k = 1;
 		s->user.buttons = 0;
 		s->params2d = initialise_2d((unsigned int *)s->img.addr);
 	}

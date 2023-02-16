@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/15 15:13:08 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/16 02:15:55 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@
 # define MAX_ITER 50
 # define WIN_WIDTH 400
 # define WIN_HEIGHT 240
+# define SH_W 250
+# define SH_H 150
 # define MAX_POINTS 230987
 # define ZOOM_FACTOR 2
 # define Q0 (t_quaternion){0, 0, 0, 0}
@@ -105,6 +107,9 @@ typedef struct	s_cloud
 	int				points;
 	t_quaternion	rot;
 	t_quaternion	center;
+	t_quaternion	rot_light;
+	int				shadow[SH_H][SH_W];
+	char			lit[232000];
 	t_quaternion	voxels[232000];
 }				t_cloud;
 
