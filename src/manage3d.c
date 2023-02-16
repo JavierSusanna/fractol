@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/14 13:29:58 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/16 11:39:36 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	px_to_cloud(t_pixel p, t_sack s)
 
 	if ((s.cloud)->points > MAX_POINTS)
 		return ;
-	pt = q_by_scalar(pixel_to_quat(p, s), s.params2d.zoom);
+	pt = q_by_scalar(pixel_noise_quat(p, s), s.params2d.zoom);
 	s.cloud->voxels[s.cloud->points].r = 0;
 	s.cloud->voxels[s.cloud->points].i = dot_prod(pt, s.params2d.base.x);
 	s.cloud->voxels[s.cloud->points].j = dot_prod(pt, s.params2d.base.y);

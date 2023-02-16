@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 08:41:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 00:37:43 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/16 10:40:12 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ int	vmouse_press(int button, int x, int y, t_sack *s)
 		else if (4 == button)
 			s->params2d.zoom += 0.2;
 		plot(*s, 1);
-		printf("zoom3d: [%f]\n", s->params2d.zoom);
 	}
 	s->user.ln.p0.x = x;
 	s->user.ln.p0.y = y;
@@ -71,11 +70,6 @@ int	vmouse_move(int x, int y, t_sack *s)
 	plot(*s, 0);
 	s->cloud->rot = q_by(rotation, s->cloud->rot);
 	q_unit(&(s->cloud->rot));
-	if (!(s->user.buttons & 2))
-	{
-		s->cloud->rot_light = q_by(rotation, s->cloud->rot_light);
-		q_unit(&(s->cloud->rot_light));
-	}
 	plot(*s, 1);
 	return (0);
 }

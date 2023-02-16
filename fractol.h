@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 02:15:55 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/16 11:40:19 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,6 @@
 # define MAX_ITER 50
 # define WIN_WIDTH 400
 # define WIN_HEIGHT 240
-# define SH_W 250
-# define SH_H 150
 # define MAX_POINTS 230987
 # define ZOOM_FACTOR 2
 # define Q0 (t_quaternion){0, 0, 0, 0}
@@ -107,9 +105,6 @@ typedef struct	s_cloud
 	int				points;
 	t_quaternion	rot;
 	t_quaternion	center;
-	t_quaternion	rot_light;
-	int				shadow[SH_H][SH_W];
-	char			lit[232000];
 	t_quaternion	voxels[232000];
 }				t_cloud;
 
@@ -136,7 +131,9 @@ t_quaternion		rotate(t_quaternion p, t_quaternion rot);
 
 /*imagemath.c*/
 void				pixel_axis(t_2dhypersection sect,
-						t_quaternion *x_axis, t_quaternion *y_axis);
+						t_quaternion *x_axis, t_quaternion *y_axis,
+						t_quaternion *z_axis);
+t_quaternion		pixel_noise_quat(t_pixel p, t_sack s);
 t_quaternion		pixel_to_quat(t_pixel p, t_sack s);
 t_quaternion		pass_center(t_pixel p, t_sack s);
 t_quaternion		pxl_other(t_pixel p, t_sack s);
