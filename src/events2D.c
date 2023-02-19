@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 19:23:03 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/19 02:33:26 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 int	key_press(int keycode, t_sack *s)
 {
+	printf("keycode: %i\n", keycode);
+	if (INIT_VIEW == keycode)
+		initialise_2d(s);
 	if (CHG_BASE == keycode)
 	{
 		chg_base(s);
@@ -94,7 +97,7 @@ int	mouse_release(int button, int x, int y, t_sack *s)
 		pile3d(*other);
 		project2d(*other, 1);
 		((t_sack *)s->other3d)->params2d.zoom = 1;
-		other->cloud->rot = QR;
+		other->cloud->rot = (t_quaternion){1, 0, 0, 0};
 		open_cloud(s->other3d);
 	}
 	return (x + y);

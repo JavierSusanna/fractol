@@ -6,29 +6,33 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 10:40:39 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/19 03:01:57 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../fractol.h"
 
-void	initialise_base(t_sack *s)
+void	initialise_2d(t_sack *s)
 {
+	s->params2d.addr = (unsigned int *)s->img.addr;
+	s->params2d.center = (t_quaternion){0, 0, 0, 0};
+	s->params2d.base.z = (t_quaternion){0, 0, 0, 0};
+	s->params2d.max_i = MAX_ITER;
+	s->params2d.zoom = 1.0;
 	if ('J' == s->type)
 	{
-		s->params2d.base.x = QR;
-		s->params2d.base.y = QI;
+		s->params2d.base.x = (t_quaternion){1, 0, 0, 0};
+		s->params2d.base.y = (t_quaternion){0, 1, 0, 0};
 	}
 	if ('M' == s->type)
 	{
-		s->params2d.base.x = QJ;
-		s->params2d.base.y = QK;
+		s->params2d.base.x = (t_quaternion){0, 0, 1, 0};
+		s->params2d.base.y = (t_quaternion){0, 0, 0, 1};
 	}
 }
 
 void	show_image(t_sack *s)
 {
-	initialise_base(s);
 	mlx_hook(s->mlx_win, 2, 1L << 0, key_press, s);
 	mlx_hook(s->mlx_win, 3, 1L << 1, key_release, s);
 	mlx_hook(s->mlx_win, 4, 1L << 2, mouse_press, s);
@@ -37,7 +41,7 @@ void	show_image(t_sack *s)
 	project2d(*s, 1);
 }
 
-t_2dhypersection	initialise_2d(unsigned int *addr)
+/*t_2dhypersection	initialise_2d(unsigned int *addr)
 {
 	t_2dhypersection	ret;
 
@@ -50,7 +54,7 @@ t_2dhypersection	initialise_2d(unsigned int *addr)
 	ret.zoom = 1.0;
 	return (ret);
 }
-
+*/
 void	initialise_s(t_sack *s, char *win_name)
 {
 	s->img.height = 1;
@@ -70,13 +74,12 @@ void	initialise_s(t_sack *s, char *win_name)
 	if ('3' != s->type)
 	{
 		s->cloud->points = 0;
-		s->cloud->rot = Q0;
-		s->cloud->rot.r = 1;
+		s->cloud->z_eye = -4;
+		s->cloud->rot = (t_quaternion){1, 0, 0, 0};
 		s->user.buttons = 0;
-		s->params2d = initialise_2d((unsigned int *)s->img.addr);
+		initialise_2d(s);
 	}
-	s->user.ln.p0.x = 0;
-	s->user.ln.p0.y = 0;
+	s->user.ln.p0 = (t_pixel){0, 0};
 	s->user.ln.p1 = s->user.ln.p0;
 }
 
@@ -101,7 +104,7 @@ void	open_all(char type, double re, double im)
 	initialise_s(&sm, "Mandelbrot");
 	if ('j' == type)
 		initialise_s(&sj, "Julia");
-	sj.params2d.center = Q0;
+	sj.params2d.center = (t_quaternion){0, 0, 0, 0};
 	sj.params2d.center.j = re;
 	sj.params2d.center.k = im;
 	show_image(&sj);

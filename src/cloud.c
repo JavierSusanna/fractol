@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 19:35:16 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/19 01:41:09 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,14 @@ void	plot(t_sack s, int paint)
 	while (++n < s.cloud->points)
 	{
 		tmp = rotate(s.cloud->voxels[n], s.cloud->rot);
-		p.x = tmp.i * s.img.height + s.params2d.zoom * s.img.width;
-		p.y = tmp.k * s.img.height + s.params2d.zoom * s.img.height;
-		p.x /= s.params2d.zoom * 2;
-		p.y /= s.params2d.zoom * 2;
+		if (s.params2d.zoom * tmp.j <= s.cloud->z_eye)
+			continue ;
+		p.x = tmp.i * s.img.height;
+		p.y = tmp.k * s.img.height;
+		p.x /= -s.cloud->z_eye + s.params2d.zoom * tmp.j;
+		p.y /= -s.cloud->z_eye + s.params2d.zoom * tmp.j;
+		p.x += s.img.width / 2;
+		p.y += s.img.height / 2;
 		if (p.x >= 0 && p.x < s.img.width && p.y >= 0 && p.y < s.img.height)
 			*(addr + p.y * s.img.width + p.x)
 				= 0x00ffffff * paint;

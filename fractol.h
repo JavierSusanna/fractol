@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 20:25:49 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/19 02:33:35 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@
 # include <math.h>
 # include <mlx.h>
 
-
 # define ESC 53
 # define CHG_BASE 21
+# define INIT_VIEW 29 
 # define KEY_UP 126
 # define KEY_DOWN 125
 # define KEY_LEFT 123
@@ -35,17 +35,11 @@
 # define DRAG_IMG	0b0000000100000000
 # define MAX_ITER 50
 # define WIN_WIDTH 400
-# define WIN_HEIGHT 240
+# define WIN_HEIGHT 400
 # define MAX_POINTS 230987
 # define ZOOM_FACTOR 2
-# define Q0 (t_quaternion){0, 0, 0, 0}
-# define QR (t_quaternion){1, 0, 0, 0}
-# define QI (t_quaternion){0, 1, 0, 0}
-# define QJ (t_quaternion){0, 0, 1, 0}
-# define QK (t_quaternion){0, 0, 0, 1}
 
-
-typedef struct	s_data 
+typedef struct s_data
 {
 	void	*img;
 	char	*addr;
@@ -56,7 +50,7 @@ typedef struct	s_data
 	int		height;
 }				t_data;
 
-typedef struct	s_quaternion
+typedef struct s_quaternion
 {
 	double	r;
 	double	i;
@@ -64,7 +58,7 @@ typedef struct	s_quaternion
 	double	k;
 }				t_quaternion;
 
-typedef struct	s_base
+typedef struct s_base
 {
 	t_quaternion	x;
 	t_quaternion	y;
@@ -72,7 +66,7 @@ typedef struct	s_base
 
 }				t_base;
 
-typedef struct	s_2dhypersection
+typedef struct s_2dhypersection
 {
 	unsigned int	*addr;
 	t_quaternion	center;
@@ -82,33 +76,34 @@ typedef struct	s_2dhypersection
 
 }				t_2dhypersection;
 
-typedef struct	s_pixel
+typedef struct s_pixel
 {
 	int	x;
 	int	y;
 }				t_pixel;
 
-typedef struct	s_line
+typedef struct s_line
 {
 	t_pixel	p0;
 	t_pixel	p1;
 }				t_line;
 
-typedef struct	s_user_state
+typedef struct s_user_state
 {
 	unsigned int	buttons;
 	t_line			ln;
 }				t_user_state;
 
-typedef struct	s_cloud
+typedef struct s_cloud
 {
 	int				points;
+	double			z_eye;
 	t_quaternion	rot;
 	t_quaternion	center;
 	t_quaternion	voxels[232000];
 }				t_cloud;
 
-typedef struct	s_sack
+typedef struct s_sack
 {
 	void				*mlx;
 	void				*mlx_win;
@@ -120,7 +115,6 @@ typedef struct	s_sack
 	void				*other;
 	void				*other3d;
 }				t_sack;
-
 
 /*othermath.c*/
 void				q_unit(t_quaternion *q);
@@ -151,9 +145,8 @@ unsigned int		color(int scheme, t_quaternion point, t_sack s);
 int					project2d(t_sack s, int colors);
 void				draw_ln(t_line l, t_sack s);
 
-
 /*events3d.c*/
-int 				vkey_press(int keycode, t_sack *s);
+int					vkey_press(int keycode, t_sack *s);
 int					vmouse_press(int button, int x, int y, t_sack *s);
 int					vmouse_release(int button, int x, int y, t_sack *s);
 int					vmouse_move(int x, int y, t_sack *s);
@@ -164,11 +157,11 @@ void				chg_view(t_sack *s, int key);
 void				chg_iter(t_sack *s, int key);
 
 /*events2d.c*/
-int 				key_press(int keycode, t_sack *s);
-int 				key_release(int keycode, t_sack *s);
-int 				mouse_press(int button, int x, int y, t_sack *s);
-int 				mouse_release(int button, int x, int y, t_sack *s);
-int 				mouse_move(int x, int y, t_sack *s);
+int					key_press(int keycode, t_sack *s);
+int					key_release(int keycode, t_sack *s);
+int					mouse_press(int button, int x, int y, t_sack *s);
+int					mouse_release(int button, int x, int y, t_sack *s);
+int					mouse_move(int x, int y, t_sack *s);
 
 /*quatmath.c*/
 t_quaternion		q_add(t_quaternion q1, t_quaternion q2);
@@ -178,15 +171,15 @@ t_quaternion		q_by_scalar(t_quaternion q1, double s);
 t_quaternion		q_star(t_quaternion q);
 
 /*init.c*/
-void				initialise_base(t_sack *s);
+void				initialise_2d(t_sack *s);
 void				show_image(t_sack *s);
-t_2dhypersection	initialise_2D(unsigned int *addr);
+/*t_2dhypersection	initialise_2d(unsigned int *addr);*/
 void				initialise_s(t_sack *s, char *win_name);
 void				open_all(char type, double re, double im);
 
 /*fractol.c*/
 double				ft_strtof(char *str);
-void				showhelp();
+void				showhelp(void);
 int					main(int nargs, char **args);
 
 #endif

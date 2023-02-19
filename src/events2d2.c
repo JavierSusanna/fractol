@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 17:18:55 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/19 02:32:33 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,19 +21,19 @@ void	chg_base(t_sack *s)
 		chg_base((t_sack *)(s->other));
 	else if (tmp.k)
 	{
-		s->params2d.base.y = QI;
-		((t_sack *)(s->other))->params2d.base.y = QK;
+		s->params2d.base.y = (t_quaternion){0, 1, 0, 0};
+		((t_sack *)(s->other))->params2d.base.y = (t_quaternion){0, 0, 0, 1};
 	}
 	else if (tmp.j)
 	{
-		s->params2d.base.y = QK;
-		((t_sack *)(s->other))->params2d.base.x = QJ;
-		((t_sack *)(s->other))->params2d.base.y = QI;
+		s->params2d.base.y = (t_quaternion){0, 0, 0, 1};
+		((t_sack *)(s->other))->params2d.base.x = (t_quaternion){0, 0, 1, 0};
+		((t_sack *)(s->other))->params2d.base.y = (t_quaternion){0, 1, 0, 0};
 	}
 	else if (tmp.i)
 	{
-		s->params2d.base.y = QJ;
-		((t_sack *)(s->other))->params2d.base.x = QI;
+		s->params2d.base.y = (t_quaternion){0, 0, 1, 0};
+		((t_sack *)(s->other))->params2d.base.x = (t_quaternion){0, 1, 0, 0};
 	}
 }
 

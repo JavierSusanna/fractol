@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 08:41:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 10:40:12 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/19 01:41:33 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ int	vmouse_press(int button, int x, int y, t_sack *s)
 	else
 	{
 		plot(*s, 0);
-		if (5 == button && s->params2d.zoom > 1)
-			s->params2d.zoom -= 0.2;
+		if (5 == button && s->cloud->z_eye > -10)
+			s->cloud->z_eye *= 1.2;
 		else if (4 == button)
-			s->params2d.zoom += 0.2;
+			s->cloud->z_eye /= 1.2;
 		plot(*s, 1);
 	}
 	s->user.ln.p0.x = x;
