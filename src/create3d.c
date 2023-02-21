@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fractol.c                                          :+:      :+:    :+:   */
+/*   create3d.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/16 19:40:53 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:42:30 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,19 +38,18 @@ void	find_border(t_pixel p, t_sack s)
 	{
 		bp.y = p.y + n / 3 - 1;
 		bp.x = p.x + n % 3 - 1;
-		if (bp.x > 0 && bp.x < WIN_WIDTH && bp.y > 0 && bp.y < WIN_HEIGHT)
+		if (!in_win(bp.x, bp.y, s))
+			continue ;
+		if (*(p_addr) > 1 && !*(s.params2d.addr + WIN_WIDTH * bp.y + bp.x))
 		{
-			if (*(p_addr) > 1 && !*(s.params2d.addr + WIN_WIDTH * bp.y + bp.x))
-			{
-				*(s.params2d.addr + WIN_WIDTH * bp.y + bp.x) = 1;
-				px_to_cloud(bp, s);
-			}
-			else if (!*(p_addr)
-				&& *(s.params2d.addr + WIN_WIDTH * bp.y + bp.x) > 1)
-			{
-				*(p_addr) = 1;
-				px_to_cloud(p, s);
-			}
+			*(s.params2d.addr + WIN_WIDTH * bp.y + bp.x) = 1;
+			px_to_cloud(bp, s);
+		}
+		else if (!*(p_addr)
+			&& *(s.params2d.addr + WIN_WIDTH * bp.y + bp.x) > 1)
+		{
+			*(p_addr) = 1;
+			px_to_cloud(p, s);
 		}
 	}
 }
@@ -90,7 +89,7 @@ void	pile3d(t_sack s)
 	part = 0;
 	while (s.cloud->points < MAX_POINTS && z < 200)
 	{
-		printf("%d, puntos: [%d]\n", z, s.cloud->points);
+		printf("%d, puntos: [%d]\r", z, s.cloud->points);
 		z++;
 		s.params2d.center = q_add(c0, q_by_scalar(z_v, part));
 		project2d(s, 2);

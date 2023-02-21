@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   imagemath2.c                                       :+:      :+:    :+:   */
+/*   events2d2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/19 02:32:33 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:20:37 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,9 @@ void	chg_iter(t_sack *s, int key)
 		s->params2d.max_i *= 1.1;
 	else if (KEY_DOWN == key && s->params2d.max_i > 10)
 		s->params2d.max_i /= 1.1;
+}
+
+int	in_win(int x, int y, t_sack s)
+{
+	return (x >= 0 && y >= 0 && x < s.img.width && y < s.img.height);
 }

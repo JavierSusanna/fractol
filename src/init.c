@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fractol.c                                          :+:      :+:    :+:   */
+/*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/19 03:01:57 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:20:06 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,6 @@ void	show_image(t_sack *s)
 	project2d(*s, 1);
 }
 
-/*t_2dhypersection	initialise_2d(unsigned int *addr)
-{
-	t_2dhypersection	ret;
-
-	ret.addr = addr;
-	ret.center = Q0;
-	ret.base.x = Q0;
-	ret.base.y = Q0;
-	ret.base.z = Q0;
-	ret.max_i = MAX_ITER;
-	ret.zoom = 1.0;
-	return (ret);
-}
-*/
 void	initialise_s(t_sack *s, char *win_name)
 {
 	s->img.height = 1;

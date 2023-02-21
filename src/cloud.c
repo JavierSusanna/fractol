@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quatmath.c                                         :+:      :+:    :+:   */
+/*   cloud.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/19 01:41:09 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:42:42 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ void	open_cloud(t_sack *s)
 {
 	clear_img(s->img);
 	mlx_hook(s->mlx_win, 2, 1L << 0, vkey_press, s);
+	mlx_hook(s->mlx_win, 3, 1L << 1, vkey_release, s);
 	mlx_hook(s->mlx_win, 4, 1L << 2, vmouse_press, s);
 	mlx_hook(s->mlx_win, 5, 1L << 3, vmouse_release, s);
 	mlx_hook(s->mlx_win, 6, 1L << 6, vmouse_move, s);

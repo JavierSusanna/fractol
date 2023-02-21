@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fractol.c                                          :+:      :+:    :+:   */
+/*   events2d.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/19 02:33:26 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:19:55 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 int	key_press(int keycode, t_sack *s)
 {
-	printf("keycode: %i\n", keycode);
+	if (!in_win(s->user.ln.p0.x, s->user.ln.p0.y, *s))
+		return (0);
 	if (INIT_VIEW == keycode)
 		initialise_2d(s);
 	if (CHG_BASE == keycode)
@@ -22,8 +23,6 @@ int	key_press(int keycode, t_sack *s)
 		chg_base(s);
 		project2d(*(t_sack *)(s->other), 1);
 	}
-	if (!(s->user.ln.p0.x) && !(s->user.ln.p0.y))
-		s->user.ln.p0.x = -100;
 	if (s->user.buttons & PR_LCAPS)
 		chg_iter(s, keycode);
 	else if (KEY_UP == keycode || KEY_DOWN == keycode
@@ -50,15 +49,17 @@ int	key_release(int keycode, t_sack *s)
 
 int	mouse_press(int button, int x, int y, t_sack *s)
 {
-	if (y < 0)
+	double	slow;
+
+	if (!in_win(x, y, *s))
 		return (0);
-	s->user.ln.p0.x = x;
-	s->user.ln.p0.y = y;
+	slow = (PR_LCAPS & s->user.buttons) / PR_LCAPS;
+	s->user.ln.p0 = (t_pixel){x, y};
 	s->user.ln.p1 = s->user.ln.p0;
-	if (5 == button)
-		zoom_at(s->user.ln.p0, ZOOM_FACTOR, s);
-	else if (4 == button)
-		zoom_at(s->user.ln.p0, 1.0 / ZOOM_FACTOR, s);
+	if (5 == button || 7 == button)
+		zoom_at(s->user.ln.p0, ZOOM_FACTOR - SL_Z * slow, s);
+	else if (4 == button || 6 == button)
+		zoom_at(s->user.ln.p0, 1.0 / (ZOOM_FACTOR - SL_Z * slow), s);
 	else
 	{	
 		s->user.buttons |= 1 << (button - 1);
@@ -107,27 +108,27 @@ int	mouse_move(int x, int y, t_sack *s)
 {
 	t_pixel	p;
 
-	if (-100 == s->user.ln.p0.x)
-		s->user.ln.p0 = (t_pixel){x, y};
+	if (!in_win(x, y, *s) || (3 & s->user.buttons) == 3)
+		return (0);
 	if (1 & s->user.buttons)
 	{
 		s->user.buttons |= DRAG_IMG;
-		p.x = s->img.width / 2 + s->user.ln.p1.x - x;
-		p.y = s->img.height / 2 + s->user.ln.p1.y - y;
+		p.x = s->img.width / 2 + s->user.ln.p0.x - x;
+		p.y = s->img.height / 2 + s->user.ln.p0.y - y;
 		s->params2d.center = pixel_to_quat(p, *s);
-		project2d(*s, 1);
 	}
 	p = (t_pixel){x, y};
-	if (2 & s->user.buttons)
-	{
+	if (s->user.buttons & (0xffffffff ^ 2))
+		s->user.ln.p0 = p;
+	else
 		s->user.ln.p1 = p;
-		project2d(*s, 1);
-	}
-	if ((OTHER_IMG | 2) & s->user.buttons)
-	{
+	if (OTHER_IMG & s->user.buttons)
 		((t_sack *)(s->other))->params2d.center = pass_center(p, *s);
+	if (2 & s->user.buttons)
+		((t_sack *)(s->other))->params2d.center = pass_center(p, *s);
+	if ((OTHER_IMG | 2) & s->user.buttons)
 		project2d(*((t_sack *)s->other), 1);
-	}
-	s->user.ln.p1 = p;
+	if (3 & s->user.buttons)
+		project2d(*s, 1);
 	return (0);
 }

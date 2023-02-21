@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/15 23:03:31 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:41:37 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,27 +28,27 @@ double	ft_strtof(char *str)
 		if (*str >= '0' && *str <= '9')
 			ret = ret * 10 + (*str - '0');
 		else if (!('.' == *str) || (1 > sign && -1 < sign))
-			return (12345);
-		if ('.' == *str || (1 > sign && -1 < sign))
+			return (12345.0);
+		if ('.' == *(str++) || (*str && 1 > sign && -1 < sign))
 			sign /= 10;
-		str++;
 	}
-	if (1 > sign && -1 < sign)
-			sign *= 10;
 	return (sign * ret);
 }
 
 void	showhelp(void)
 {
-	printf("\n***********HELP************\n");
+	printf("\n************HELP************\n");
 	printf("./fractal m shows Mandelbrot Set\n");
 	printf("./fractal j 0.0 0.7 shows Julia Set\n");
-	printf("Mouse wheel to zoom in or out.\n");
-	printf("Arrows or click and drag mouse to move fractal.\n");
+	printf("Mouse wheel to zoom in or out, left caps for slow zoom\n");
+	printf("Arrows or click and drag mouse to move fractal\n");
 	printf("Left ctrl key and move mouse over a set ");
-	printf("to change the other set's parameter.\n");
+	printf("to change the other set's parameter\n");
+	printf("Press 0 to reset zoom and center\n");
 	printf("Right click, drag and release on a window for 3D ");
 	printf("from the other window.\n");
+	printf("Click and drag on cloud for 3D rotation, ");
+	printf("left caps for slow rotation\n");
 	printf("Press 4 to swap 4D axis\n");
 	printf("*****************************\n");
 }
@@ -62,7 +62,7 @@ int	main(int nargs, char **args)
 	if (nargs > 1)
 	{
 		type = args[1][0];
-		if ('m' == type || 'j' == type)
+		if (!(args[1][1]) && ('m' == type || 'j' == type))
 		{
 			re = 0;
 			im = 0;

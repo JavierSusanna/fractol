@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/19 02:33:35 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/20 19:32:03 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 # include <stdio.h>
 # include <stdlib.h>
-# include <unistd.h>
-# include <fcntl.h>
+/*# include <unistd.h>*/
+/*# include <fcntl.h>*/
 # include <math.h>
 # include <mlx.h>
 
@@ -30,14 +30,15 @@
 # define LEFT_CTRL 256
 # define LEFT_CAPS 257
 # define RIGHT_CAPS 258
-# define PR_LCAPS	0b0000000001000000
+# define PR_LCAPS	0b0000001000000000
 # define OTHER_IMG	0b0000000010000000
 # define DRAG_IMG	0b0000000100000000
 # define MAX_ITER 50
 # define WIN_WIDTH 400
 # define WIN_HEIGHT 400
 # define MAX_POINTS 230987
-# define ZOOM_FACTOR 2
+# define ZOOM_FACTOR 2.0F
+# define SL_Z 0.8F
 
 typedef struct s_data
 {
@@ -116,70 +117,71 @@ typedef struct s_sack
 	void				*other3d;
 }				t_sack;
 
-/*othermath.c*/
-void				q_unit(t_quaternion *q);
-void				zoom_at(t_pixel p, double zf, t_sack *s);
-void				plot(t_sack s, int paint);
-t_quaternion		rotate(t_quaternion p, t_quaternion rot);
+/*cloud.c*/
+void			q_unit(t_quaternion *q);
+void			plot(t_sack s, int paint);
+t_quaternion	rotate(t_quaternion p, t_quaternion rot);
+void			clear_img(t_data img);
+void			open_cloud(t_sack *s);
 
-/*imagemath.c*/
-void				pixel_axis(t_2dhypersection sect,
-						t_quaternion *x_axis, t_quaternion *y_axis,
-						t_quaternion *z_axis);
-t_quaternion		pixel_noise_quat(t_pixel p, t_sack s);
-t_quaternion		pixel_to_quat(t_pixel p, t_sack s);
-t_quaternion		pass_center(t_pixel p, t_sack s);
-t_quaternion		pxl_other(t_pixel p, t_sack s);
-void				iter(t_quaternion *zc);
+/*create3d.c*/
+void			px_to_cloud(t_pixel p, t_sack s);
+void			find_border(t_pixel p, t_sack s);
+void			center_cloud(t_sack s);
+void			pile3d(t_sack s);
+t_quaternion	pixel_noise_quat(t_pixel p, t_sack s);
 
-/*manage3d.c*/
-void				px_to_cloud(t_pixel p, t_sack s);
-void				find_border(t_pixel p, t_sack s);
-void				center_cloud(t_sack s);
-void				pile3d(t_sack s);
-void				open_cloud(t_sack *s);
+/*create2d.c*/
+unsigned int	color(int scheme, t_quaternion point, t_sack s);
+void			iter(t_quaternion *zc);
+int				project2d(t_sack s, int colors);
+void			draw_ln(t_line l, t_sack s);
 
 /*manage2d.c*/
-void				clear_img(t_data img);
-unsigned int		color(int scheme, t_quaternion point, t_sack s);
-int					project2d(t_sack s, int colors);
-void				draw_ln(t_line l, t_sack s);
+void			pixel_axis(t_2dhypersection sect,
+					t_quaternion *x_axis, t_quaternion *y_axis,
+					t_quaternion *z_axis);
+t_quaternion	pixel_to_quat(t_pixel p, t_sack s);
+t_quaternion	pass_center(t_pixel p, t_sack s);
+t_quaternion	pxl_other(t_pixel p, t_sack s);
+void			zoom_at(t_pixel p, double zf, t_sack *s);
 
 /*events3d.c*/
-int					vkey_press(int keycode, t_sack *s);
-int					vmouse_press(int button, int x, int y, t_sack *s);
-int					vmouse_release(int button, int x, int y, t_sack *s);
-int					vmouse_move(int x, int y, t_sack *s);
+int				vkey_press(int keycode, t_sack *s);
+int				vkey_release(int keycode, t_sack *s);
+int				vmouse_press(int button, int x, int y, t_sack *s);
+int				vmouse_release(int button, int x, int y, t_sack *s);
+int				vmouse_move(int x, int y, t_sack *s);
 
 /*events2d2.c*/
-void				chg_base(t_sack *s);
-void				chg_view(t_sack *s, int key);
-void				chg_iter(t_sack *s, int key);
+void			chg_base(t_sack *s);
+void			chg_view(t_sack *s, int key);
+void			chg_iter(t_sack *s, int key);
+int				in_win(int x, int y, t_sack s);	
 
 /*events2d.c*/
-int					key_press(int keycode, t_sack *s);
-int					key_release(int keycode, t_sack *s);
-int					mouse_press(int button, int x, int y, t_sack *s);
-int					mouse_release(int button, int x, int y, t_sack *s);
-int					mouse_move(int x, int y, t_sack *s);
+int				key_press(int keycode, t_sack *s);
+int				key_release(int keycode, t_sack *s);
+int				mouse_press(int button, int x, int y, t_sack *s);
+int				mouse_release(int button, int x, int y, t_sack *s);
+int				mouse_move(int x, int y, t_sack *s);
 
 /*quatmath.c*/
-t_quaternion		q_add(t_quaternion q1, t_quaternion q2);
-t_quaternion		q_by(t_quaternion q1, t_quaternion q2);
-double				dot_prod(t_quaternion q1, t_quaternion q2);
-t_quaternion		q_by_scalar(t_quaternion q1, double s);
-t_quaternion		q_star(t_quaternion q);
+t_quaternion	q_add(t_quaternion q1, t_quaternion q2);
+t_quaternion	q_by(t_quaternion q1, t_quaternion q2);
+double			dot_prod(t_quaternion q1, t_quaternion q2);
+t_quaternion	q_by_scalar(t_quaternion q1, double s);
+t_quaternion	q_star(t_quaternion q);
 
 /*init.c*/
-void				initialise_2d(t_sack *s);
-void				show_image(t_sack *s);
-/*t_2dhypersection	initialise_2d(unsigned int *addr);*/
-void				initialise_s(t_sack *s, char *win_name);
-void				open_all(char type, double re, double im);
+void			initialise_2d(t_sack *s);
+void			show_image(t_sack *s);
+void			initialise_s(t_sack *s, char *win_name);
+void			open_all(char type, double re, double im);
 
 /*fractol.c*/
-double				ft_strtof(char *str);
-void				showhelp(void);
-int					main(int nargs, char **args);
+double			ft_strtof(char *str);
+void			showhelp(void);
+int				main(int nargs, char **args);
 
 #endif
