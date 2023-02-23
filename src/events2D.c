@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/20 19:19:55 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/23 18:32:59 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 int	key_press(int keycode, t_sack *s)
 {
+	double slow;
+
+	printf("keycode [%i]\n", keycode);
 	if (!in_win(s->user.ln.p0.x, s->user.ln.p0.y, *s))
 		return (0);
 	if (INIT_VIEW == keycode)
@@ -23,6 +26,11 @@ int	key_press(int keycode, t_sack *s)
 		chg_base(s);
 		project2d(*(t_sack *)(s->other), 1);
 	}
+	slow = (PR_LCAPS & s->user.buttons) / PR_LCAPS;
+	if (ZOOM_IN == keycode)
+		zoom_at((t_pixel){0, 0}, ZOOM_FACTOR - SL_Z * slow, s);
+	else if (ZOOM_OUT == keycode)
+		zoom_at((t_pixel){0, 0}, 1.0 / (ZOOM_FACTOR - SL_Z * slow), s);
 	if (s->user.buttons & PR_LCAPS)
 		chg_iter(s, keycode);
 	else if (KEY_UP == keycode || KEY_DOWN == keycode
