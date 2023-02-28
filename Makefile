@@ -1,7 +1,7 @@
 ### FILES AND DIRECTORIES ###
 NAME = fractol
 GC = gcc
-CFLAGS = -Wall -Werror -Wextra -std=c89 -g # -Imlx # -fsanitize=address
+CFLAGS = -std=c89 -g #-Wall -Werror -Wextra -g # -Imlx # -fsanitize=address
 
 DIR_FRACTOL = src
 DIR_OBJ = obj
@@ -49,7 +49,7 @@ ${DIR_OBJ}/%.o: ${DIR_FRACTOL}/%.c
 	@echo "COMPILED OBJECT $@"
 
 $(NAME): ${MLX_NAME} ${DIR_OBJ} ${FILES_OBJ}
-	${GC} ${CFLAGS} ${MLX_LNK} ${FILES_OBJ} -o ${NAME} ${LIBS}
+	${GC} ${CFLAGS} ${FILES_OBJ} -o ${NAME} ${MLX_LNK} ${LIBS}
 	@echo "SUCCESSFULLY COMPILED $(NAME)"
 
 ${MLX_NAME} :
