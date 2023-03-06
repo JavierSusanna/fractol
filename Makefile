@@ -1,7 +1,7 @@
 ### FILES AND DIRECTORIES ###
 NAME = fractol
 GC = gcc
-CFLAGS = -std=c89 # -g -Wall -Werror -Wextra -Imlx # -fsanitize=address
+CFLAGS = -std=c89# -g -Wall -Werror -Wextra -Imlx # -fsanitize=address
 
 DIR_FRACTOL = src
 DIR_OBJ = obj
@@ -28,7 +28,7 @@ ifeq (${OS},Linux)
 	LIBS = -lm -lmlx_Linux -lXext -lX11 -lz
 endif
 ifeq (${OS},Darwin)
-	CFLAGS += -D OSX
+	CFLAGS += -w -D OSX
 	MLX	= lib/minilibx-mac/
 	MLX_NAME = ${MLX_NAME_MAC}.a
 	LIBS = -lmlx -framework OpenGL -framework AppKit
@@ -45,7 +45,7 @@ INCLUDES = -I ./${MLX} -I ./inc
 all: $(NAME)
 
 ${DIR_OBJ}/%.o: ${DIR_FRACTOL}/%.c
-	${GC} ${CFLAGS} ${INCLUDES} -c $< -o $@ ${LIBS}
+	@${GC} ${CFLAGS} ${INCLUDES} -c $< -o $@ ${LIBS}
 	@echo "COMPILED OBJECT $@"
 
 $(NAME): ${MLX_NAME} ${DIR_OBJ} ${FILES_OBJ}
@@ -54,7 +54,7 @@ $(NAME): ${MLX_NAME} ${DIR_OBJ} ${FILES_OBJ}
 
 ${MLX_NAME} :
 	make -C ${MLX}
-	cp ${MLX}/${MLX_NAME} .
+	cp ${MLX}${MLX_NAME} .
 
 $(DIR_OBJ):
 	mkdir -p $(DIR_OBJ) 2> /dev/null
