@@ -1,14 +1,18 @@
 ### FILES AND DIRECTORIES ###
 NAME = fractol
 GC = gcc
+<<<<<<< HEAD
 CFLAGS = -std=c89 # -g -Wall -Werror -Wextra -Imlx # -fsanitize=address
+=======
+CFLAGS = -std=c89 -g #-Wall -Werror -Wextra -g # -Imlx # -fsanitize=address
+>>>>>>> 0810ba003754e9800d6ea94c9b3a859a51e31ff1
 
 DIR_FRACTOL = src
 DIR_OBJ = obj
 
 FILES_FRACTOL = \
 	fractol init quatmath events2d events2d2 events3d manage2d create2d \
-	create3d cloud 
+	create3d cloud
 
 FILES_SRC += $(addprefix $(DIR_FRACTOL)/, $(FILES_FRACTOL))
 FILES_OBJ = $(addprefix $(DIR_OBJ)/, $(addsuffix .o, $(FILES_FRACTOL)))
@@ -25,7 +29,7 @@ ifeq (${OS},Linux)
 	CFLAGS += -D LINUX
 	MLX = lib/minilibx-linux/
 	MLX_NAME = ${MLX_NAME_LINUX}.a
-	LIBS = -lmlx_Linux -lXext -lX11 -lm -lz
+	LIBS = -lm -lmlx_Linux -lXext -lX11 -lz
 endif
 ifeq (${OS},Darwin)
 	CFLAGS += -D OSX
@@ -45,19 +49,19 @@ INCLUDES = -I ./${MLX} -I ./inc
 all: $(NAME)
 
 ${DIR_OBJ}/%.o: ${DIR_FRACTOL}/%.c
-	@${GC} ${CFLAGS} ${INCLUDES} -c $< -o $@
+	${GC} ${CFLAGS} ${INCLUDES} -c $< -o $@ ${LIBS}
 	@echo "COMPILED OBJECT $@"
 
 $(NAME): ${MLX_NAME} ${DIR_OBJ} ${FILES_OBJ}
-	@${GC} ${CFLAGS} ${MLX_LNK} ${FILES_OBJ} -o ${NAME} ${LIBS}
+	${GC} ${CFLAGS} ${FILES_OBJ} -o ${NAME} ${MLX_LNK} ${LIBS}
 	@echo "SUCCESSFULLY COMPILED $(NAME)"
 
 ${MLX_NAME} :
-	@make -C ${MLX}
-	@cp ${MLX}/${MLX_NAME} .
+	make -C ${MLX}
+	cp ${MLX}/${MLX_NAME} .
 
 $(DIR_OBJ):
-	@mkdir -p $(DIR_OBJ) 2> /dev/null
+	mkdir -p $(DIR_OBJ) 2> /dev/null
 
 bonus: all
 
