@@ -1,11 +1,7 @@
 ### FILES AND DIRECTORIES ###
 NAME = fractol
 GC = gcc
-<<<<<<< HEAD
 CFLAGS = -std=c89 # -g -Wall -Werror -Wextra -Imlx # -fsanitize=address
-=======
-CFLAGS = -std=c89 -g #-Wall -Werror -Wextra -g # -Imlx # -fsanitize=address
->>>>>>> 0810ba003754e9800d6ea94c9b3a859a51e31ff1
 
 DIR_FRACTOL = src
 DIR_OBJ = obj
