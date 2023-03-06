@@ -25,7 +25,7 @@ ifeq (${OS},Linux)
 	CFLAGS += -D LINUX
 	MLX = lib/minilibx-linux/
 	MLX_NAME = ${MLX_NAME_LINUX}.a
-	LIBS = -lm -lmlx_Linux -lXext -lX11 -lz
+	LIBS = -lm -lmlx_Linux -lXext -lX11#-lz
 endif
 ifeq (${OS},Darwin)
 	CFLAGS += -w -D OSX
