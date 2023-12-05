@@ -1,0 +1,76 @@
+### FILES AND DIRECTORIES ###
+NAME = fractol
+GC = gcc
+CFLAGS = -Wall -Werror -Wextra -std=c89 -g # -Imlx # -fsanitize=address
+
+DIR_FRACTOL = src
+DIR_OBJ = obj
+
+FILES_FRACTOL = \
+	fractol init quatmath events2d events2d2 events3d manage2d create2d \
+	create3d cloud 
+
+FILES_SRC += $(addprefix $(DIR_FRACTOL)/, $(FILES_FRACTOL))
+FILES_OBJ = $(addprefix $(DIR_OBJ)/, $(addsuffix .o, $(FILES_FRACTOL)))
+
+MLX_NAME_MAC = libmlx.a
+
+MLX_NAME_LINUX = libmlx_Linux.a
+
+RM		= rm -rf
+
+OS		:= $(shell uname -s)
+
+ifeq (${OS},Linux)
+	CFLAGS += -D LINUX
+	MLX = lib/minilibx-linux/
+	MLX_NAME = ${MLX_NAME_LINUX}
+	LIBS = -lft -lmlx_Linux -lXext -lX11 -lm -lz
+endif
+ifeq (${OS},Darwin)
+	CFLAGS += -D OSX
+	MLX	= lib/minilibx_macos/
+	MLX_NAME = ${MLX_NAME_MAC}
+	LIBS = -lft -lmlx -framework OpenGL -framework AppKit
+endif
+
+MLX_LNK	= -L ${MLX}
+
+INCLUDES = -I ./${MLX} -I ./inc
+
+#####################
+### PROGRAM RULES ###
+#####################
+
+all: $(NAME)
+
+${DIR_OBJ}/%.o: ${DIR_FRACTOL}/%.c
+	@${GC} ${CFLAGS} ${INCLUDES} -c $< -o $@
+
+$(NAME): ${MLX_NAME} ${DIR_OBJ} ${FILES_OBJ}
+	@${GC} ${CFLAGS} ${MLX_LNK} ${FILES_OBJ} -o ${NAME} ${LIBS}
+
+${MLX_NAME} :
+	@make -C ${MLX}
+	@cp ${MLX}/${MLX_NAME} .
+
+$(DIR_OBJ):
+	@mkdir -p $(DIR_OBJ) 2> /dev/null
+
+bonus: all
+
+###################
+### CLEAN RULES ###
+###################
+
+clean:
+	@${RM} *.a ${DIR_OBJ}/*.o *.dSYM
+	@echo "-FRACTOL- OBJECTS DELETED. CLEAN SUCCESSFUL!"
+
+fclean: clean
+	@${RM} ${NAME}
+	@echo "-FRACTOL- LIBRARY DELETED. CLEAN SUCCESSFUL!"
+
+re:	fclean all
+
+.PHONY:	clean re fclean all

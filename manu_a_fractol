@@ -1,0 +1,13 @@
+manu			fractol
+CC				GC
+
+SRCS			FILES_FRACTOL(aquí sin .c)
+OBJS			(nada)
+
+SRCS_DIR		DIR_FRACTOL
+OBJS_DIR		DIR_OBJ
+
+SRCS_PATHS		FILES_SRC
+OBJS_PATHS		FILES_OBJ
+
+
