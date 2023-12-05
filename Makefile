@@ -1,19 +1,42 @@
 ### FILES AND DIRECTORIES ###
 NAME = fractol
 GC = gcc
-CFLAGS = -Wall -Werror -Wextra -std=c89 -g -Imlx # -fsanitize=address
-INCLUDES = include
+CFLAGS = -std=c89# -g -Wall -Werror -Wextra -Imlx # -fsanitize=address
 
-DIR_FRACTOL = src/
+DIR_FRACTOL = src
+DIR_OBJ = obj
+
 FILES_FRACTOL = \
 	fractol init quatmath events2d events2d2 events3d manage2d create2d \
-	create3d cloud 
+	create3d cloud
 
-FILES_SRC += $(addprefix $(DIR_FRACTOL), $(FILES_FRACTOL))
+FILES_SRC += $(addprefix $(DIR_FRACTOL)/, $(FILES_FRACTOL))
+FILES_OBJ = $(addprefix $(DIR_OBJ)/, $(addsuffix .o, $(FILES_FRACTOL)))
 
-DIR_OBJ = obj/
-FILES_OBJ = $(addprefix $(DIR_OBJ), $(addsuffix .o, $(FILES_FRACTOL)))
+MLX_NAME_LINUX = libmlx_Linux
 
+MLX_NAME_MAC = libmlx_Mac
+
+RM		= rm -rf
+
+OS		:= $(shell uname -s)
+
+ifeq (${OS},Linux)
+	CFLAGS += -D LINUX
+	MLX = lib/minilibx-linux/
+	MLX_NAME = ${MLX_NAME_LINUX}.a
+	LIBS = -lm -lmlx_Linux -lXext -lX11#-lz
+endif
+ifeq (${OS},Darwin)
+	CFLAGS += -w -D OSX
+	MLX	= lib/minilibx-mac/
+	MLX_NAME = ${MLX_NAME_MAC}.a
+	LIBS = -lmlx -framework OpenGL -framework AppKit
+endif
+
+MLX_LNK	= -L ${MLX}
+
+INCLUDES = -I ./${MLX} -I ./inc
 
 #####################
 ### PROGRAM RULES ###
@@ -21,25 +44,20 @@ FILES_OBJ = $(addprefix $(DIR_OBJ), $(addsuffix .o, $(FILES_FRACTOL)))
 
 all: $(NAME)
 
-$(NAME): $(FILES_OBJ)
-	$(GC) $(FILES_OBJ) -lmlx -framework OpenGL -framework AppKit -o $(NAME) # -fsanitize=address
-#	@ar rsc $(NAME) $(FILES_OBJ)
-	@echo "SUCCESSFULLY COMPILED $(NAME)"
-
-$(DIR_OBJ)%.o: $(DIR_FRACTOL)%.c | LIB
-	@$(GC) $(CFLAGS) -I $(INCLUDES) -c $< -o $@
+${DIR_OBJ}/%.o: ${DIR_FRACTOL}/%.c
+	@${GC} ${CFLAGS} ${INCLUDES} -c $< -o $@ ${LIBS}
 	@echo "COMPILED OBJECT $@"
 
-LIB: DIRECTORIES
-#	@make -C mlx
-#	@cp mlx/libmlx.a .
-#	@mv libmlx.a $(NAME)
+$(NAME): ${MLX_NAME} ${DIR_OBJ} ${FILES_OBJ}
+	${GC} ${CFLAGS} ${FILES_OBJ} -o ${NAME} ${MLX_LNK} ${LIBS}
+	@echo "SUCCESSFULLY COMPILED $(NAME)"
 
+${MLX_NAME} :
+	make -C ${MLX}
+	cp ${MLX}${MLX_NAME} .
 
-
-DIRECTORIES:
-	@mkdir -p $(DIR_OBJ)
-	
+$(DIR_OBJ):
+	mkdir -p $(DIR_OBJ) 2> /dev/null
 
 bonus: all
 
@@ -48,14 +66,17 @@ bonus: all
 ###################
 
 clean:
-#	@make clean -C mlx
-	@rm -rf $(DIR_OBJ)
+	@make clean -C ${MLX}
+#	@${RM} *.a ${DIR_OBJ}/*.o *.dSYM
+	@${RM} *.a ${DIR_OBJ} *.dSYM
 	@echo "-FRACTOL- OBJECTS DELETED. CLEAN SUCCESSFUL!"
 
 fclean: clean
-#	@rm -rf mlx/libmlx.a
-	@rm -rf $(NAME)
-#	@echo "-MLX- LIBRARY DELETED. CLEAN SUCCESSFUL!"
+	@${RM} ${MLX_NAME}
+	@${RM} ${NAME}
+	@echo "GRAPHICS LIBRARY DELETED. CLEAN SUCCESSFUL!"
 	@echo "-FRACTOL- LIBRARY DELETED. CLEAN SUCCESSFUL!"
 
 re:	fclean all
+
+.PHONY:	clean re fclean all

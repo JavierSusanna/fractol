@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 14:24:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/20 19:32:03 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/23 18:50:55 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@
 # define KEY_DOWN 125
 # define KEY_LEFT 123
 # define KEY_RIGHT 124
+# define ZOOM_IN 13
+# define ZOOM_OUT 1
 # define LEFT_CTRL 256
 # define LEFT_CAPS 257
 # define RIGHT_CAPS 258

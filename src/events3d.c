@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/28 08:41:05 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/20 19:20:53 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/02/23 16:02:14 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ int	vmouse_press(int button, int x, int y, t_sack *s)
 	else
 	{
 		plot(*s, 0);
-		if (5 == button && s->cloud->z_eye > -10)
+		if (4 == button && s->cloud->z_eye > -10)
 			s->cloud->z_eye *= 1.2;
-		else if (4 == button)
+		else if (5 == button)
 			s->cloud->z_eye /= 1.2;
 		plot(*s, 1);
 	}
@@ -71,7 +71,7 @@ int	vmouse_move(int x, int y, t_sack *s)
 	h1 /= 1.0 + 99.0 * (s->user.buttons & PR_LCAPS) / PR_LCAPS;
 	costh = 1.0 - h1 / 10000;
 	rotation.r = costh;
-	h1 = (hypot(x1, y1) + 0.1);
+/*	h1 = (hypot(x1, y1) + 0.1);*/
 	rotation.i = -sqrt(1 - costh * costh) * y1 / h1;
 	rotation.j = 0;
 	rotation.k = sqrt(1 - costh * costh) * x1 / h1;

@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/20 19:20:06 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/03/06 09:56:04 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,11 @@ void	open_all(char type, double re, double im)
 	t_cloud			cloud;
 
 	sm.mlx = mlx_init();
+	if (!sm.mlx)
+	{
+		printf("\nFatal. Unable to start graphics.\n");
+		return ;
+	}
 	sj.mlx = sm.mlx;
 	s3d.mlx = sm.mlx;
 	sm.cloud = &cloud;
