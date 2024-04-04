@@ -3,7 +3,7 @@
 
 ## Introduction
 
-![Download and watch video example](https://github.com/JavierSusanna/fractol/blob/main/gallery/Dragon.png "Wellcome example")
+![Example](https://github.com/JavierSusanna/fractol/blob/main/gallery/Dragon_small.png "Wellcome example")
 
 This project has been developed as a part of the 42 Madrid Fundación Telefónica Programming Campus.
 It contains a Mandolbrot set / Julia sets generator. It can also generate 3D point clouds stacking images of the sets.
@@ -23,8 +23,11 @@ If re and im are included, they will set the value of C for the Julia set.
 Each set will open in a different window, one will be occulting the other at startup.
 Drag the sets to explore them, use the mouse wheel to zoom in and out.
 Hold ctrl key and hover over a set to change the other set's parameter.
+
 Right click and drag to blow your mind into an interactive 3D cloud of points.
 Drag 3D view to rotate it, use the mouse wheel to zoom in and out.
+
+![Example2](https://github.com/JavierSusanna/fractol/blob/main/gallery/3D.gif "3D example")
 
 ## Quaternions
 Instead of the usual complex numbers, quaternions have been used to handle the math part of the project.
