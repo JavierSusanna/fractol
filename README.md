@@ -3,7 +3,7 @@
 
 ## Introduction
 
-[Download and watch video example](https://github.com/JavierSusanna/fractol/tree/main/gallery/short.mp4 "Wellcome example")
+![Download and watch video example](https://github.com/JavierSusanna/fractol/blob/main/gallery/Dragon.png "Wellcome example")
 
 This project has been developed as a part of the 42 Madrid Fundación Telefónica Programming Campus.
 It contains a Mandolbrot set / Julia sets generator. It can also generate 3D point clouds stacking images of the sets.
