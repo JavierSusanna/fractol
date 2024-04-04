@@ -37,9 +37,9 @@ int	vmouse_press(int button, int x, int y, t_sack *s)
 	else
 	{
 		plot(*s, 0);
-		if (4 == button && s->cloud->z_eye > -10)
+		if (5 == button && s->cloud->z_eye > -10)
 			s->cloud->z_eye *= 1.2;
-		else if (5 == button)
+		else if (4 == button)
 			s->cloud->z_eye /= 1.2;
 		plot(*s, 1);
 	}

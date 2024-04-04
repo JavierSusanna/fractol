@@ -17,23 +17,23 @@ void	chg_base(t_sack *s)
 	t_quaternion	tmp;
 
 	tmp = s->params2d.base.y;
-	if ('M' == s->type)
+	if ('J' == s->type)
 		chg_base((t_sack *)(s->other));
 	else if (tmp.k)
 	{
-		s->params2d.base.y = (t_quaternion){0, 1, 0, 0};
-		((t_sack *)(s->other))->params2d.base.y = (t_quaternion){0, 0, 0, 1};
+		s->params2d.base.y = (t_quaternion){1, 0, 0, 0};
+		((t_sack *)(s->other))->params2d.base.x = (t_quaternion){0, 0, 0, 1};
 	}
-	else if (tmp.j)
+	else if (tmp.r)
 	{
-		s->params2d.base.y = (t_quaternion){0, 0, 0, 1};
-		((t_sack *)(s->other))->params2d.base.x = (t_quaternion){0, 0, 1, 0};
-		((t_sack *)(s->other))->params2d.base.y = (t_quaternion){0, 1, 0, 0};
+		s->params2d.base.y = (t_quaternion){0, 1, 0, 0};
+		((t_sack *)(s->other))->params2d.base.x = (t_quaternion){1, 0, 0, 0};
+		((t_sack *)(s->other))->params2d.base.y = (t_quaternion){0, 0, 0, 1};
 	}
 	else if (tmp.i)
 	{
-		s->params2d.base.y = (t_quaternion){0, 0, 1, 0};
-		((t_sack *)(s->other))->params2d.base.x = (t_quaternion){0, 1, 0, 0};
+		s->params2d.base.y = (t_quaternion){0, 0, 0, 1};
+		((t_sack *)(s->other))->params2d.base.y = (t_quaternion){0, 1, 0, 0};
 	}
 }
 
@@ -59,9 +59,15 @@ void	chg_view(t_sack *s, int key)
 void	chg_iter(t_sack *s, int key)
 {
 	if (KEY_UP == key)
+	{
 		s->params2d.max_i *= 1.1;
+		((t_sack *)(s->other))->params2d.max_i *= 1.1;
+	}
 	else if (KEY_DOWN == key && s->params2d.max_i > 10)
+	{
 		s->params2d.max_i /= 1.1;
+		((t_sack *)(s->other))->params2d.max_i /= 1.1;
+	}
 }
 
 int	in_win(int x, int y, t_sack s)

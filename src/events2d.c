@@ -28,15 +28,16 @@ int	key_press(int keycode, t_sack *s)
 	}
 	slow = (PR_LCAPS & s->user.buttons) / PR_LCAPS;
 	if (ZOOM_IN == keycode)
-		zoom_at((t_pixel){0, 0}, ZOOM_FACTOR - SL_Z * slow, s);
+		zoom_at((t_pixel){WIN_WIDTH / 2, WIN_HEIGHT / 2}, ZOOM_FACTOR - SL_Z * slow, s);
 	else if (ZOOM_OUT == keycode)
-		zoom_at((t_pixel){0, 0}, 1.0 / (ZOOM_FACTOR - SL_Z * slow), s);
+		zoom_at((t_pixel){WIN_WIDTH / 2, WIN_HEIGHT / 2}, 1.0 / (ZOOM_FACTOR - SL_Z * slow), s);
 	if (s->user.buttons & PR_LCAPS)
 		chg_iter(s, keycode);
 	else if (KEY_UP == keycode || KEY_DOWN == keycode
 		|| KEY_RIGHT == keycode || KEY_LEFT == keycode)
 		chg_view(s, keycode);
 	project2d(*s, 1);
+	project2d(*(t_sack *)s->other, 1);
 	if (ESC == keycode)
 		exit(EXIT_SUCCESS);
 	if (LEFT_CAPS == keycode)
@@ -64,9 +65,9 @@ int	mouse_press(int button, int x, int y, t_sack *s)
 	slow = (PR_LCAPS & s->user.buttons) / PR_LCAPS;
 	s->user.ln.p0 = (t_pixel){x, y};
 	s->user.ln.p1 = s->user.ln.p0;
-	if (5 == button || 7 == button)
+	if (4 == button || 6 == button)
 		zoom_at(s->user.ln.p0, ZOOM_FACTOR - SL_Z * slow, s);
-	else if (4 == button || 6 == button)
+	else if (5 == button || 7 == button)
 		zoom_at(s->user.ln.p0, 1.0 / (ZOOM_FACTOR - SL_Z * slow), s);
 	else
 	{	
@@ -80,6 +81,7 @@ int	mouse_press(int button, int x, int y, t_sack *s)
 		project2d(*(t_sack *)(s->other), 1);
 	}
 	project2d(*s, 1);
+	project2d(*(t_sack *)s->other, 1);
 	return (0);
 }
 

@@ -66,4 +66,12 @@ void	zoom_at(t_pixel p, double zf, t_sack *s)
 	p.y = (int)tmp;
 	s->params2d.center = pixel_to_quat(p, *s);
 	s->params2d.zoom *= zf;
+	p = (t_pixel){WIN_WIDTH / 2, WIN_HEIGHT / 2};
+	s = (t_sack *)(s->other);
+	tmp = (double)p.x * (1.0 - 1.0 / zf) + (double)WIN_WIDTH / 2.0 / zf;
+	p.x = (int)tmp;
+	tmp = (double)p.y * (1.0 - 1.0 / zf) + (double)WIN_HEIGHT / 2.0 / zf;
+	p.y = (int)tmp;
+	s->params2d.center = pixel_to_quat(p, *s);
+	s->params2d.zoom *= zf;
 }
