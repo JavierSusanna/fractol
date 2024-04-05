@@ -23,6 +23,8 @@ log_error(){
 get_xlib_include_path(){
 	local result=""
 
+#		/usr/share/X11          \
+#		/mnt/c/msys64/mingw64/include \
 	for inc in \
 		/usr/X11/include          \
 		/usr/X11R6/include        \

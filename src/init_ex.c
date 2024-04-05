@@ -6,7 +6,7 @@
 /*   By: fsusanna <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/14 16:48:14 by fsusanna          #+#    #+#             */
-/*   Updated: 2023/02/20 19:20:06 by fsusanna         ###   ########.fr       */
+/*   Updated: 2023/03/06 09:56:04 by fsusanna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,6 @@ void	initialise_s(t_sack *s, char *win_name)
 		s->cloud = ((t_sack *)(s->other))->cloud;
 	s->img.width = s->img.height * WIN_WIDTH;
 	s->img.height *= WIN_HEIGHT;
-	printf("s: %p\n", s);
-	printf("mlx: %p\n", s->mlx);
 	s->mlx_win = mlx_new_window(s->mlx, s->img.width, s->img.height, win_name);
 	s->img.img = mlx_new_image(s->mlx, s->img.width, s->img.height);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel,
@@ -79,7 +77,11 @@ void	open_all(char type, double re, double im)
 	t_cloud			cloud;
 
 	sm.mlx = mlx_init();
-	printf("orig_mlx: %p\n", sm.mlx);
+	if (!sm.mlx)
+	{
+		printf("\nFatal. Unable to start graphics.\n");
+		return ;
+	}
 	sj.mlx = sm.mlx;
 	s3d.mlx = sm.mlx;
 	sm.cloud = &cloud;
