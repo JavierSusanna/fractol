@@ -60,6 +60,7 @@ int	mouse_press(int button, int x, int y, t_sack *s)
 {
 	double	slow;
 
+	printf("button [%i]\n", button);
 	if (!in_win(x, y, *s))
 		return (0);
 	slow = (PR_LCAPS & s->user.buttons) / PR_LCAPS;
@@ -74,7 +75,7 @@ int	mouse_press(int button, int x, int y, t_sack *s)
 		s->user.buttons |= 1 << (button - 1);
 		s->user.buttons &= 0xffffffff ^ DRAG_IMG;
 	}
-	if (2 == button)
+	if (LEFT_BUTTON == button)
 	{
 		((t_sack *)(s->other))->params2d.center
 			= pass_center(s->user.ln.p0, *s);
@@ -100,7 +101,7 @@ int	mouse_release(int button, int x, int y, t_sack *s)
 		}
 		s->user.buttons &= 0xffffffff ^ DRAG_IMG;
 	}
-	else if (2 == button)
+	else if (LEFT_BUTTON == button)
 	{
 		other->params2d.center = pass_center(s->user.ln.p1, *s);
 		other->params2d.base.z = q_add(((t_sack *)(s->other))->params2d.center,
@@ -120,7 +121,7 @@ int	mouse_move(int x, int y, t_sack *s)
 
 	if (!in_win(x, y, *s) || (3 & s->user.buttons) == 3)
 		return (0);
-	if (1 & s->user.buttons)
+	if ((LEFT_BUTTON - 1) & s->user.buttons)
 	{
 		s->user.buttons |= DRAG_IMG;
 		p.x = s->img.width / 2 + s->user.ln.p0.x - x;

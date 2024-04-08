@@ -14,6 +14,7 @@
 
 int	vkey_press(int keycode, t_sack *s)
 {
+	printf("keycode3D [%i]\n", keycode);
 	if (ESC == keycode)
 		exit(EXIT_SUCCESS);
 	if (LEFT_CAPS == keycode)
@@ -30,6 +31,7 @@ int	vkey_release(int keycode, t_sack *s)
 
 int	vmouse_press(int button, int x, int y, t_sack *s)
 {
+	printf("button3D [%i]\n", button);
 	if (y < 0)
 		return (0);
 	if (button < 4)

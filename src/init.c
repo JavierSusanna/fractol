@@ -29,15 +29,23 @@ void	initialise_2d(t_sack *s)
 		s->params2d.base.x = (t_quaternion){0, 0, 1, 0};
 		s->params2d.base.y = (t_quaternion){0, 0, 0, 1};
 	}
+	printf("%i\n", mlx_hook(s->mlx_win, 2, 1L << 0, vkey_press, s));
+	printf("%i\n", mlx_hook(s->mlx_win, 3, 1L << 1, vkey_release, s));
+	printf("%i\n", mlx_hook(s->mlx_win, 4, 1L << 2, vmouse_press, s));
+	printf("%i\n", mlx_hook(s->mlx_win, 5, 1L << 3, vmouse_release, s));
+	printf("%i\n\n", mlx_hook(s->mlx_win, 6, 1L << 6, vmouse_move, s));
+	open_cloud(s);
 }
 
 void	show_image(t_sack *s)
 {
-	mlx_hook(s->mlx_win, 2, 1L << 0, key_press, s);
-	mlx_hook(s->mlx_win, 3, 1L << 1, key_release, s);
-	mlx_hook(s->mlx_win, 4, 1L << 2, mouse_press, s);
-	mlx_hook(s->mlx_win, 5, 1L << 3, mouse_release, s);
-	mlx_hook(s->mlx_win, 6, 1L << 6, mouse_move, s);
+	printf("type: %c*******\n", s->type);
+	printf("mlx_win: %p*******\n", s->mlx_win);
+	printf("%i\n", mlx_hook(s->mlx_win, 2, 1L << 0, key_press, s));
+	printf("%i\n", mlx_hook(s->mlx_win, 3, 1L << 1, key_release, s));
+	printf("%i\n", mlx_hook(s->mlx_win, 4, 1L << 2, mouse_press, s));
+	printf("%i\n", mlx_hook(s->mlx_win, 5, 1L << 3, mouse_release, s));
+	printf("%i\n", mlx_hook(s->mlx_win, 6, 1L << 6, mouse_move, s));
 	project2d(*s, 1);
 }
 
@@ -46,7 +54,7 @@ void	initialise_s(t_sack *s, char *win_name)
 	s->img.height = 1;
 	s->type = win_name[0];
 	if ('3' == s->type)
-		s->img.height = 1200 / WIN_HEIGHT;
+		s->img.height = 600 / WIN_HEIGHT;
 	if ('M' == s->type)
 		((t_sack *)(s->other3d))->cloud = s->cloud;
 	if ('J' == s->type)
@@ -56,6 +64,7 @@ void	initialise_s(t_sack *s, char *win_name)
 	printf("s: %p\n", s);
 	printf("mlx: %p\n", s->mlx);
 	s->mlx_win = mlx_new_window(s->mlx, s->img.width, s->img.height, win_name);
+	printf("mlx_win: %p\n\n", s->mlx_win);
 	s->img.img = mlx_new_image(s->mlx, s->img.width, s->img.height);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel,
 			&s->img.line_length, &s->img.endian);
@@ -63,7 +72,7 @@ void	initialise_s(t_sack *s, char *win_name)
 	{
 		s->cloud->points = 0;
 		s->cloud->z_eye = -4;
-		s->cloud->rot = (t_quaternion){1, 0, 0, 0};
+		s->cloud->rot = (t_quaternion){0.6, 0.4, 0, 0};
 		s->user.buttons = 0;
 		initialise_2d(s);
 	}
@@ -78,6 +87,7 @@ void	open_all(char type, double re, double im)
 	t_sack			s3d;
 	t_cloud			cloud;
 
+	printf("aquí\n");
 	sm.mlx = mlx_init();
 	printf("orig_mlx: %p\n", sm.mlx);
 	sj.mlx = sm.mlx;

@@ -20,25 +20,47 @@
 # include <math.h>
 # include <mlx.h>
 
-# define ESC 53
-# define CHG_BASE 21
-# define INIT_VIEW 29 
-# define KEY_UP 126
-# define KEY_DOWN 125
-# define KEY_LEFT 123
-# define KEY_RIGHT 124
-# define ZOOM_IN 13
-# define ZOOM_OUT 1
-# define LEFT_CTRL 256
-# define LEFT_CAPS 257
-# define RIGHT_CAPS 258
+# ifdef LINUX
+#  define ESC 65307
+#  define CHG_BASE 52
+#  define INIT_VIEW 48
+#  define KEY_UP 65362
+#  define KEY_DOWN 65364
+#  define KEY_LEFT 65361
+#  define KEY_RIGHT 65363
+#  define ZOOM_IN 113
+#  define ZOOM_OUT 97
+#  define LEFT_CTRL 65507
+#  define LEFT_CAPS 65505
+#  define RIGHT_CAPS 65506
+#  define LEFT_BUTTON 3
+#  define BOTH_BUTTONS 4
+# endif
+
+# ifdef OSX
+#  define ESC 53
+#  define CHG_BASE 21
+#  define INIT_VIEW 29 
+#  define KEY_UP 126
+#  define KEY_DOWN 125
+#  define KEY_LEFT 123
+#  define KEY_RIGHT 124
+#  define ZOOM_IN 13
+#  define ZOOM_OUT 1
+#  define LEFT_CTRL 256
+#  define LEFT_CAPS 257
+#  define RIGHT_CAPS 258
+#  define LEFT_BUTTON 2
+#  define BOTH_BUTTONS 3
+# endif
+
 # define PR_LCAPS	0b0000001000000000
 # define OTHER_IMG	0b0000000010000000
 # define DRAG_IMG	0b0000000100000000
 # define MAX_ITER 50
 # define WIN_WIDTH 400
 # define WIN_HEIGHT 400
-# define MAX_POINTS 230987
+# define MAX_POINTS 130987
 # define ZOOM_FACTOR 2.0F
 # define SL_Z 0.8F
 

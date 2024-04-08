@@ -89,7 +89,7 @@ void	pile3d(t_sack s)
 	part = 0;
 	while (s.cloud->points < MAX_POINTS && z < 200)
 	{
-		printf("%d, puntos: [%d]\r", z, s.cloud->points);
+		printf("%d, puntos: [%d], part %f\r", z, s.cloud->points, part);
 		z++;
 		s.params2d.center = q_add(c0, q_by_scalar(z_v, part));
 		project2d(s, 2);
