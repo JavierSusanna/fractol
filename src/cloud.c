@@ -45,7 +45,7 @@ void	plot(t_sack s, int paint)
 				= 0x00ffffff * paint;
 	}
 	mlx_put_image_to_window(s.mlx, s.mlx_win, s.img.img, 0, 0);
-	mlx_do_sync(s.mlx);
+/*	mlx_do_sync(s.mlx);*/
 }
 
 t_quaternion	rotate(t_quaternion p, t_quaternion rot)
@@ -63,7 +63,7 @@ void	clear_img(t_data img)
 	addr = (unsigned int *)img.addr;
 	n = -1;
 	while (++n < img.width * img.height)
-		*(addr++) = 0x0000ff00;
+		*(addr++) = 0x00000000;
 }
 
 void	open_cloud(t_sack *s)
@@ -71,5 +71,10 @@ void	open_cloud(t_sack *s)
 	printf("\nHereWeAre\n");
 	printf("mlx_win: %p*******\n", s->mlx_win);
 	clear_img(s->img);
+	printf("%i\n", mlx_hook(s->mlx_win, 2, 1L << 0, vkey_press, s));
+	printf("%i\n", mlx_hook(s->mlx_win, 3, 1L << 1, vkey_release, s));
+	printf("%i\n", mlx_hook(s->mlx_win, 4, 1L << 2, vmouse_press, s));
+	printf("%i\n", mlx_hook(s->mlx_win, 5, 1L << 3, vmouse_release, s));
+	printf("%i\n\n", mlx_hook(s->mlx_win, 6, 1L << 6, vmouse_move, s));
 	plot(*s, 1);
 }

@@ -48,7 +48,7 @@ INCLUDES = -I ./${MLX} -I ./inc
 all: $(NAME)
 
 ${DIR_OBJ}/%.o: ${DIR_FRACTOL}/%.c
-	${GC} ${CFLAGS} ${INCLUDES} -c $< -o $@ ${LIBS}
+	@${GC} ${CFLAGS} ${INCLUDES} -c $< -o $@ # ${LIBS}
 	@echo "COMPILED OBJECT $@"
 
 $(NAME): ${MLX_NAME} ${DIR_OBJ} ${FILES_OBJ}

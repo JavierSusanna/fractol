@@ -29,12 +29,7 @@ void	initialise_2d(t_sack *s)
 		s->params2d.base.x = (t_quaternion){0, 0, 1, 0};
 		s->params2d.base.y = (t_quaternion){0, 0, 0, 1};
 	}
-	printf("%i\n", mlx_hook(s->mlx_win, 2, 1L << 0, vkey_press, s));
-	printf("%i\n", mlx_hook(s->mlx_win, 3, 1L << 1, vkey_release, s));
-	printf("%i\n", mlx_hook(s->mlx_win, 4, 1L << 2, vmouse_press, s));
-	printf("%i\n", mlx_hook(s->mlx_win, 5, 1L << 3, vmouse_release, s));
-	printf("%i\n\n", mlx_hook(s->mlx_win, 6, 1L << 6, vmouse_move, s));
-	open_cloud(s);
+/*	open_cloud(s);*/
 }
 
 void	show_image(t_sack *s)
