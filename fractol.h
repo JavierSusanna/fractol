@@ -60,7 +60,7 @@
 # define MAX_ITER 50
 # define WIN_WIDTH 400
 # define WIN_HEIGHT 400
-# define MAX_POINTS 130987
+# define MAX_POINTS 230987
 # define ZOOM_FACTOR 2.0F
 # define SL_Z 0.8F
 

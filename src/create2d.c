@@ -75,7 +75,7 @@ void	draw_ln(t_line l, t_sack s)
 
 	d = (t_pixel){l.p1.x - l.p0.x, l.p1.y - l.p0.y};
 	n = -1;
-	if (!(s.user.buttons & 2) || l.p1.x < 0 || l.p1.x >= s.img.width
+	if (!(s.user.buttons & (1 << (LEFT_BUTTON - 1))) || l.p1.x < 0 || l.p1.x >= s.img.width
 		|| (!d.x && !d.y) || l.p1.y < 0 || l.p1.y >= s.img.height)
 		return ;
 	aux = (t_line){l.p1, l.p0};
