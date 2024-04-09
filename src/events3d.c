@@ -70,13 +70,13 @@ int	vmouse_move(int x, int y, t_sack *s)
 	h1 = hypot(x1, y1);
 	if (!(s->user.buttons & 3) || !h1)
 		return (0);
-	h1 /= 1.0 + 99.0 * (s->user.buttons & PR_LCAPS) / PR_LCAPS;
-	costh = 1.0 - h1 / 10000;
+	h1 /= 1.0 + 99.0 * (double)(s->user.buttons & PR_LCAPS) / (double)PR_LCAPS;
+	costh = 1.0 - h1 / 10000.0;
 	rotation.r = costh;
 /*	h1 = (hypot(x1, y1) + 0.1);*/
-	rotation.i = -sqrt(1 - costh * costh) * y1 / h1;
-	rotation.j = 0;
-	rotation.k = sqrt(1 - costh * costh) * x1 / h1;
+	rotation.i = -sqrt(1.0 - costh * costh) * y1 / h1;
+	rotation.j = 0.0;
+	rotation.k = sqrt(1.0 - costh * costh) * x1 / h1;
 	plot(*s, 0);
 	s->cloud->rot = q_by(rotation, s->cloud->rot);
 	q_unit(&(s->cloud->rot));

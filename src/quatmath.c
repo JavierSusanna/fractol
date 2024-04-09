@@ -48,8 +48,8 @@ t_quaternion	q_by_scalar(t_quaternion q1, double s)
 
 t_quaternion	q_star(t_quaternion q)
 {
-	q.i *= -1;
-	q.j *= -1;
-	q.k *= -1;
+	q.i *= -1.0;
+	q.j *= -1.0;
+	q.k *= -1.0;
 	return (q);
 }

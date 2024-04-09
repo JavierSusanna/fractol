@@ -119,9 +119,9 @@ int	mouse_move(int x, int y, t_sack *s)
 {
 	t_pixel	p;
 
-	if (!in_win(x, y, *s) || (3 & s->user.buttons) == 3)
+	if (!in_win(x, y, *s) || ((s->user.buttons & 1) && (s->user.buttons & (1 << (LEFT_BUTTON - 1)))))
 		return (0);
-	if ((LEFT_BUTTON - 1) & s->user.buttons)
+	if (1 & s->user.buttons)
 	{
 		s->user.buttons |= DRAG_IMG;
 		p.x = s->img.width / 2 + s->user.ln.p0.x - x;
@@ -129,13 +129,13 @@ int	mouse_move(int x, int y, t_sack *s)
 		s->params2d.center = pixel_to_quat(p, *s);
 	}
 	p = (t_pixel){x, y};
-	if (s->user.buttons & (0xffffffff ^ 2))
+	if (s->user.buttons)
 		s->user.ln.p0 = p;
 	else
 		s->user.ln.p1 = p;
 	if (OTHER_IMG & s->user.buttons)
 		((t_sack *)(s->other))->params2d.center = pass_center(p, *s);
-	if (2 & s->user.buttons)
+	if ((1 << (LEFT_BUTTON - 1)) & s->user.buttons)
 		((t_sack *)(s->other))->params2d.center = pass_center(p, *s);
 	if ((OTHER_IMG | 2) & s->user.buttons)
 		project2d(*((t_sack *)s->other), 1);

@@ -41,7 +41,8 @@ void	show_image(t_sack *s)
 	printf("%i\n", mlx_hook(s->mlx_win, 4, 1L << 2, mouse_press, s));
 	printf("%i\n", mlx_hook(s->mlx_win, 5, 1L << 3, mouse_release, s));
 	printf("%i\n", mlx_hook(s->mlx_win, 6, 1L << 6, mouse_move, s));
-	project2d(*s, 1);
+	if ('3' != s->type)
+		project2d(*s, 1);
 }
 
 void	initialise_s(t_sack *s, char *win_name)
@@ -103,5 +104,6 @@ void	open_all(char type, double re, double im)
 	sj.params2d.center.k = im;
 	show_image(&sj);
 	show_image(&sm);
+	show_image(&s3d);
 	mlx_loop(sm.mlx);
 }

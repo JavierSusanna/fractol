@@ -93,8 +93,8 @@ void	pile3d(t_sack s)
 		z++;
 		s.params2d.center = q_add(c0, q_by_scalar(z_v, part));
 		project2d(s, 2);
-		part += (sqrt(5) - 1) / 2;
-		part = part - trunc(part);
+		part += (sqrt(5.0) - 1.0) / 2.0;
+		part = part - floor(part);
 	}
 	center_cloud(s);
 }
