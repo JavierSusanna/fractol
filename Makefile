@@ -25,7 +25,8 @@ ifeq (${OS},Linux)
 	CFLAGS += -D LINUX
 	MLX = lib/minilibx-linux/
 	MLX_NAME = ${MLX_NAME_LINUX}.a
-	LIBS = -lmlx_Linux -lX11 -lXext -lm -lz
+	LIBS = -lm -lmlx_Linux -lX11 -lXext
+# -lz
 #	MLX	= lib/minilibx-mac/
 #	MLX_NAME = ${MLX_NAME_MAC}.a
 #	LIBS = -lmlx -framework OpenGL -framework AppKit
