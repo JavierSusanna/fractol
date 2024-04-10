@@ -13,11 +13,11 @@
 #ifndef FRACTOL_H
 # define FRACTOL_H
 
+# include <math.h>
 # include <stdio.h>
 # include <stdlib.h>
 /*# include <unistd.h>*/
 /*# include <fcntl.h>*/
-# include <math.h>
 # include <mlx.h>
 
 # ifdef LINUX

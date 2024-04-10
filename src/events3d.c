@@ -70,7 +70,7 @@ int	vmouse_move(int x, int y, t_sack *s)
 /*	h1 = hypot(x1, y1);*/
 	h1 = sqrt(x1 * x1 + y1 * y1);
 /*	printf("x1 [%f], y1 [%f], h1 [%f]\n", x1, y1, h1);*/
-	if (!(s->user.buttons & 3) || !h1)
+	if (!(s->user.buttons & 1) || !h1)
 		return (0);
 	h1 /= 1.0 + 99.0 * (double)(s->user.buttons & PR_LCAPS) / (double)PR_LCAPS;
 	costh = 1.0 - h1 / 10000.0;

@@ -1,7 +1,7 @@
 ### FILES AND DIRECTORIES ###
 NAME = fractol
 GC = gcc
-CFLAGS = -std=c89 -g #-Wall -Werror -Wextra # -Imlx # -fsanitize=address
+CFLAGS = -std=c89 -g -fcx-limited-range #-Wall -Werror -Wextra # -Imlx # -fsanitize=address
 
 DIR_FRACTOL = src
 DIR_OBJ = obj
@@ -25,7 +25,7 @@ ifeq (${OS},Linux)
 	CFLAGS += -D LINUX
 	MLX = lib/minilibx-linux/
 	MLX_NAME = ${MLX_NAME_LINUX}.a
-	LIBS = -lm -lmlx_Linux -lX11 -lXext
+	LIBS = -lm -lmlx_Linux -lX11 -lXext 
 # -lz
 #	MLX	= lib/minilibx-mac/
 #	MLX_NAME = ${MLX_NAME_MAC}.a
