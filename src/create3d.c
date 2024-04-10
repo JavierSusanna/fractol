@@ -98,7 +98,36 @@ void	pile3d(t_sack s)
 	}
 	center_cloud(s);
 }
+/*
+void	pile3d(t_sack s)
+{
+	int				z;
+	t_quaternion	z_v;
+	t_quaternion	c0;
+	double			part;
 
+	c0 = pass_center(((t_sack *)(s.other))->user.ln.p0, *(t_sack *)(s.other));
+	z_v = s.params2d.base.z;
+	q_unit(&(s.params2d.base.z));
+	project2d(s, -1);
+	s.cloud->center = s.params2d.center;
+	z = 0;
+	s.cloud->points = 0;
+	s.params2d.center = q_add(c0, z_v);
+	project2d(s, 2);
+	part = 0;
+	while (s.cloud->points < MAX_POINTS && z < 200)
+	{
+		printf("%d, puntos: [%d], part %f\r", z, s.cloud->points, part);
+		z++;
+		s.params2d.center = q_add(c0, q_by_scalar(z_v, part));
+		project2d(s, 2);
+		part += (sqrt(5.0) - 1.0) / 2.0;
+		part = part - floor(part);
+	}
+	center_cloud(s);
+}
+*/
 t_quaternion	pixel_noise_quat(t_pixel p, t_sack s)
 {
 	t_quaternion	x_axis;

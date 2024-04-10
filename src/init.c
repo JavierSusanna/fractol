@@ -34,13 +34,11 @@ void	initialise_2d(t_sack *s)
 
 void	show_image(t_sack *s)
 {
-	printf("type: %c*******\n", s->type);
-	printf("mlx_win: %p*******\n", s->mlx_win);
-	printf("%i\n", mlx_hook(s->mlx_win, 2, 1L << 0, key_press, s));
-	printf("%i\n", mlx_hook(s->mlx_win, 3, 1L << 1, key_release, s));
-	printf("%i\n", mlx_hook(s->mlx_win, 4, 1L << 2, mouse_press, s));
-	printf("%i\n", mlx_hook(s->mlx_win, 5, 1L << 3, mouse_release, s));
-	printf("%i\n", mlx_hook(s->mlx_win, 6, 1L << 6, mouse_move, s));
+	mlx_hook(s->mlx_win, 2, 1L << 0, key_press, s);
+	mlx_hook(s->mlx_win, 3, 1L << 1, key_release, s);
+	mlx_hook(s->mlx_win, 4, 1L << 2, mouse_press, s);
+	mlx_hook(s->mlx_win, 5, 1L << 3, mouse_release, s);
+	mlx_hook(s->mlx_win, 6, 1L << 6, mouse_move, s);
 	project2d(*s, 1);
 }
 
@@ -56,10 +54,7 @@ void	initialise_s(t_sack *s, char *win_name)
 		s->cloud = ((t_sack *)(s->other))->cloud;
 	s->img.width = s->img.height * WIN_WIDTH;
 	s->img.height *= WIN_HEIGHT;
-	printf("s: %p\n", s);
-	printf("mlx: %p\n", s->mlx);
 	s->mlx_win = mlx_new_window(s->mlx, s->img.width, s->img.height, win_name);
-	printf("mlx_win: %p\n\n", s->mlx_win);
 	s->img.img = mlx_new_image(s->mlx, s->img.width, s->img.height);
 	s->img.addr = mlx_get_data_addr(s->img.img, &s->img.bits_per_pixel,
 			&s->img.line_length, &s->img.endian);
@@ -82,9 +77,7 @@ void	open_all(char type, double re, double im)
 	t_sack			s3d;
 	t_cloud			cloud;
 
-	printf("aquí\n");
 	sm.mlx = mlx_init();
-	printf("orig_mlx: %p\n", sm.mlx);
 	sj.mlx = sm.mlx;
 	s3d.mlx = sm.mlx;
 	sm.cloud = &cloud;

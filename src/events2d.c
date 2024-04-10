@@ -16,7 +16,6 @@ int	key_press(int keycode, t_sack *s)
 {
 	double slow;
 
-	printf("keycode [%i]\n", keycode);
 	if (!in_win(s->user.ln.p0.x, s->user.ln.p0.y, *s))
 		return (0);
 	if (INIT_VIEW == keycode)
@@ -60,7 +59,6 @@ int	mouse_press(int button, int x, int y, t_sack *s)
 {
 	double	slow;
 
-	printf("button [%i]\n", button);
 	if (!in_win(x, y, *s))
 		return (0);
 	slow = (PR_LCAPS & s->user.buttons) / PR_LCAPS;

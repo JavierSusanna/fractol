@@ -14,7 +14,6 @@
 
 int	vkey_press(int keycode, t_sack *s)
 {
-	printf("keycode3D [%i]\n", keycode);
 	if (ESC == keycode)
 		exit(EXIT_SUCCESS);
 	if (LEFT_CAPS == keycode)
@@ -31,7 +30,6 @@ int	vkey_release(int keycode, t_sack *s)
 
 int	vmouse_press(int button, int x, int y, t_sack *s)
 {
-	printf("button3D [%i]\n", button);
 	if (y < 0)
 		return (0);
 	if (button < 4)
@@ -69,13 +67,11 @@ int	vmouse_move(int x, int y, t_sack *s)
 	s->user.ln.p0 = (t_pixel){x, y};
 /*	h1 = hypot(x1, y1);*/
 	h1 = sqrt(x1 * x1 + y1 * y1);
-/*	printf("x1 [%f], y1 [%f], h1 [%f]\n", x1, y1, h1);*/
 	if (!(s->user.buttons & 1) || !h1)
 		return (0);
 	h1 /= 1.0 + 99.0 * (double)(s->user.buttons & PR_LCAPS) / (double)PR_LCAPS;
 	costh = 1.0 - h1 / 10000.0;
 	rotation.r = costh;
-/*	h1 = (hypot(x1, y1) + 0.1);*/
 	rotation.i = -sqrt(1.0 - costh * costh) * y1 / h1;
 	rotation.j = 0.0;
 	rotation.k = sqrt(1.0 - costh * costh) * x1 / h1;

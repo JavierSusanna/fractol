@@ -68,13 +68,11 @@ void	clear_img(t_data img)
 
 void	open_cloud(t_sack *s)
 {
-	printf("\nHereWeAre\n");
-	printf("mlx_win: %p*******\n", s->mlx_win);
 	clear_img(s->img);
-	printf("%i\n", mlx_hook(s->mlx_win, 2, 1L << 0, vkey_press, s));
-	printf("%i\n", mlx_hook(s->mlx_win, 3, 1L << 1, vkey_release, s));
-	printf("%i\n", mlx_hook(s->mlx_win, 4, 1L << 2, vmouse_press, s));
-	printf("%i\n", mlx_hook(s->mlx_win, 5, 1L << 3, vmouse_release, s));
-	printf("%i\n\n", mlx_hook(s->mlx_win, 6, 1L << 6, vmouse_move, s));
+	mlx_hook(s->mlx_win, 2, 1L << 0, vkey_press, s);
+	mlx_hook(s->mlx_win, 3, 1L << 1, vkey_release, s);
+	mlx_hook(s->mlx_win, 4, 1L << 2, vmouse_press, s);
+	mlx_hook(s->mlx_win, 5, 1L << 3, vmouse_release, s);
+	mlx_hook(s->mlx_win, 6, 1L << 6, vmouse_move, s);
 	plot(*s, 1);
 }
