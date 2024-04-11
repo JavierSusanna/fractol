@@ -69,65 +69,67 @@ void	center_cloud(t_sack s)
 	while (++i < p)
 		s.cloud->voxels[i] = q_add(s.cloud->voxels[i], sum);
 }
-
-void	pile3d(t_sack s)
-{
-	int				z;
-	t_quaternion	z_v;
-	t_quaternion	c0;
-	double			part;
-
-	c0 = pass_center(((t_sack *)(s.other))->user.ln.p0, *(t_sack *)(s.other));
-	z_v = s.params2d.base.z;
-	q_unit(&(s.params2d.base.z));
-	project2d(s, -1);
-	s.cloud->center = s.params2d.center;
-	z = 0;
-	s.cloud->points = 0;
-	s.params2d.center = q_add(c0, z_v);
-	project2d(s, 2);
-	part = 0;
-	while (s.cloud->points < MAX_POINTS && z < 200)
-	{
-		printf("%d, puntos: [%d], part %f\r", z, s.cloud->points, part);
-		z++;
-		s.params2d.center = q_add(c0, q_by_scalar(z_v, part));
-		project2d(s, 2);
-		part += (sqrt(5.0) - 1.0) / 2.0;
-		part = part - floor(part);
-	}
-	center_cloud(s);
-}
 /*
 void	pile3d(t_sack s)
 {
-	int				z;
+	int				ct;
+	t_base			tmp_base;
 	t_quaternion	z_v;
 	t_quaternion	c0;
 	double			part;
 
 	c0 = pass_center(((t_sack *)(s.other))->user.ln.p0, *(t_sack *)(s.other));
-	z_v = s.params2d.base.z;
+	tmp_base.z = q_by_scalar(s.params2d.base.z, 0.5);
 	q_unit(&(s.params2d.base.z));
 	project2d(s, -1);
+	s.params2d.center = q_add(c0, tmp_base.z);
 	s.cloud->center = s.params2d.center;
-	z = 0;
+	ct = 0;
 	s.cloud->points = 0;
-	s.params2d.center = q_add(c0, z_v);
 	project2d(s, 2);
 	part = 0;
-	while (s.cloud->points < MAX_POINTS && z < 200)
+	while (s.cloud->points < MAX_POINTS && ct < 200)
 	{
-		printf("%d, puntos: [%d], part %f\r", z, s.cloud->points, part);
-		z++;
-		s.params2d.center = q_add(c0, q_by_scalar(z_v, part));
+		printf("%d, puntos: [%d], part %f\r", ct, s.cloud->points, part);
+		ct++;
+		turn_section(s, ct, 200);
 		project2d(s, 2);
+		recover_section(s, tmp_base);
 		part += (sqrt(5.0) - 1.0) / 2.0;
 		part = part - floor(part);
 	}
 	center_cloud(s);
 }
 */
+void	pile3d(t_sack s)
+{
+	int				z;
+	t_quaternion	z_v;
+	t_quaternion	c0;
+	double			part;
+
+	c0 = pass_center(((t_sack *)(s.other))->user.ln.p0, *(t_sack *)(s.other));
+	z_v = s.params2d.base.z;
+	q_unit(&(s.params2d.base.z));
+	project2d(s, -1);
+	s.cloud->center = s.params2d.center;
+	z = 0;
+	s.cloud->points = 0;
+	s.params2d.center = q_add(c0, z_v);
+	project2d(s, 2);
+	part = 0;
+	while (s.cloud->points < MAX_POINTS && z < 200)
+	{
+		printf("%d, puntos: [%d], part %f\r", z, s.cloud->points, part);
+		z++;
+		s.params2d.center = q_add(c0, q_by_scalar(z_v, part));
+		project2d(s, 2);
+		part += (sqrt(5.0) - 1.0) / 2.0;
+		part = part - floor(part);
+	}
+	center_cloud(s);
+}
+
 t_quaternion	pixel_noise_quat(t_pixel p, t_sack s)
 {
 	t_quaternion	x_axis;
